@@ -1,0 +1,179 @@
+.project-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.project-filters-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 24px;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 16px 10px 42px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  outline: none;
+  font-size: 14px;
+  transition: var(--transition);
+}
+
+.search-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-icon {
+  color: var(--text-muted);
+}
+
+.filter-select {
+  padding: 10px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  outline: none;
+  font-size: 14px;
+  background-color: #ffffff;
+  min-width: 180px;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  border-color: var(--primary-color);
+}
+
+/* Badges d'expérience */
+.exp-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.exp-junior {
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+.exp-intermediate {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+}
+
+.exp-expert {
+  background-color: #faf5ff;
+  color: #6b21a8;
+}
+
+.project-budget-td {
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: center;
+}
+
+.project-date-td {
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* No data container */
+.no-data-td {
+  padding: 48px 0 !important;
+  text-align: center;
+}
+
+.no-data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.no-data-icon {
+  color: var(--text-muted);
+  opacity: 0.4;
+}
+
+.no-data-container p {
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.btn-delete-action:hover {
+  background-color: #fef2f2 !important;
+  color: var(--danger-color) !important;
+  border-color: #fca5a5 !important;
+}
+
+@media (max-width: 768px) {
+  .project-filters-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .search-box {
+    max-width: 100%;
+  }
+  
+  .filter-select {
+    width: 100%;
+  }
+}
+
+/* Centrage des cellules du tableau */
+.dashboard-table th,
+.dashboard-table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.status-delivered {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-dispute {
+  background-color: #fee2e2;
+  color: #dc2626;
+}

@@ -1,0 +1,173 @@
+.sign-contract-page {
+  padding: 32px 48px;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
+  margin-bottom: 32px;
+}
+
+.sign-page-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.page-subtitle {
+  color: #64748b;
+  margin-top: 4px;
+  font-size: 15px;
+}
+
+.contract-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  flex: 1;
+}
+
+@media (min-width: 1024px) {
+  .contract-container {
+    grid-template-columns: 2.5fr 1fr;
+    align-items: start;
+  }
+}
+
+.contract-document {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 60px 80px;
+  border: 1px solid #e2e8f0;
+  min-height: 800px;
+}
+
+.paper-style {
+  position: relative;
+  background-image: 
+    linear-gradient(90deg, transparent 59px, #abced4 59px, #abced4 61px, transparent 61px),
+    linear-gradient(#f8fafc .1em, transparent .1em);
+  background-size: 100% 1.5em;
+  background-position: 0 0;
+  line-height: 1.5em;
+  font-family: 'Georgia', 'Times New Roman', Times, serif;
+  font-size: 16px;
+}
+
+.contract-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #2563eb;
+}
+
+.contract-header h2 {
+  font-size: 24px;
+  color: #1e293b;
+  margin-top: 16px;
+}
+
+.contract-date {
+  text-align: right;
+  font-style: italic;
+  margin-bottom: 32px;
+  color: #475569;
+}
+
+.contract-section {
+  margin-bottom: 24px;
+}
+
+.contract-section h3 {
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.contract-section p {
+  color: #334155;
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.contract-quote {
+  background-color: rgba(241, 245, 249, 0.7);
+  padding: 16px;
+  border-left: 4px solid #94a3b8;
+  margin: 12px 0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.signature-panel {
+  background-color: white;
+  border-radius: 12px;
+  padding: 32px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 32px;
+}
+
+.signature-panel h3 {
+  font-size: 20px;
+  color: #0f172a;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.signature-panel p {
+  color: #64748b;
+  font-size: 15px;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.signature-pad-box {
+  margin-bottom: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px #cbd5e1;
+}
+
+.signature-action-area {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-large {
+  width: 100%;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.client-signature-display {
+  margin-top: 32px;
+  padding: 16px;
+  border: 2px dashed #94a3b8;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  text-align: center;
+}
+
+.client-signature-display h4 {
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.client-signature-display img {
+  max-width: 100%;
+  max-height: 120px;
+}

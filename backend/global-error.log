@@ -1,0 +1,15 @@
+[2026-07-01T11:21:53.575Z] POST /api/chat/initiate
+BODY: {"targetUserId":3}
+ERROR: {"message":"Unauthorized","statusCode":401}
+STACK: UnauthorizedException: Unauthorized
+    at JwtAuthGuard.handleRequest (C:\Users\LENOVO\Documents\@KKS-technologiesWEB\freelance\backend\node_modules\@nestjs\passport\dist\auth.guard.js:60:30)
+    at C:\Users\LENOVO\Documents\@KKS-technologiesWEB\freelance\backend\node_modules\@nestjs\passport\dist\auth.guard.js:44:124
+    at C:\Users\LENOVO\Documents\@KKS-technologiesWEB\freelance\backend\node_modules\@nestjs\passport\dist\auth.guard.js:83:24
+    at allFailed (C:\Users\LENOVO\Documents\@KKS-technologiesWEB\freelance\backend\node_modules\passport\lib\middleware\authenticate.js:110:18)
+    at attempt (C:\Users\LENOVO\Documents\@KKS-technologiesWEB\freelance\backend\node_modules\passport\lib\middleware\authenticate.js:183:28)
+    at strategy.fail (C:\Users\LENOVO\Documents\@KKS-technologiesWEB\freelance\backend\node_modules\passport\lib\middleware\authenticate.js:314:9)
+    at C:\Users\LENOVO\Documents\@KKS-technologiesWEB\freelance\backend\node_modules\passport-jwt\lib\strategy.js:106:33
+    at module.exports [as verify] (C:\Users\LENOVO\Documents\@KKS-technologiesWEB\freelance\backend\node_modules\jsonwebtoken\verify.js:70:12)
+    at module.exports [as JwtVerifier] (C:\Users\LENOVO\Documents\@KKS-technologiesWEB\freelance\backend\node_modules\passport-jwt\lib\verify_jwt.js:4:16)
+    at C:\Users\LENOVO\Documents\@KKS-technologiesWEB\freelance\backend\node_modules\passport-jwt\lib\strategy.js:104:25
+

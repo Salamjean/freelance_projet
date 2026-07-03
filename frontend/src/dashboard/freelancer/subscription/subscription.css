@@ -1,0 +1,104 @@
+.subscription-page {
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100%;
+}
+
+.subscription-container {
+  max-width: 600px;
+  width: 100%;
+  padding: 40px;
+  text-align: center;
+}
+
+.subscription-header {
+  margin-bottom: 40px;
+}
+
+.subscription-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.subscription-subtitle {
+  color: #6b7280;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.pricing-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 32px;
+  background: #f9fafb;
+}
+
+.pricing-header h3 {
+  font-size: 18px;
+  color: #374151;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.price {
+  margin-bottom: 24px;
+}
+
+.price .amount {
+  font-size: 36px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.price .currency {
+  font-size: 20px;
+  font-weight: 600;
+  color: #4b5563;
+  margin-left: 4px;
+}
+
+.price .period {
+  color: #6b7280;
+  font-size: 14px;
+  margin-left: 4px;
+}
+
+.pricing-features {
+  text-align: left;
+  margin-bottom: 32px;
+}
+
+.pricing-features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pricing-features li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  color: #4b5563;
+  font-size: 15px;
+}
+
+.feature-icon {
+  color: #10b981;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.subscribe-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+}

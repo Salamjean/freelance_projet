@@ -1,0 +1,715 @@
+datasource db {
+  provider = "mysql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+  FREELANCER
+}
+
+enum BudgetType {
+  FIXED
+  HOURLY
+}
+
+enum ExperienceLevel {
+  JUNIOR
+  INTERMEDIATE
+  EXPERT
+}
+
+enum ProjectStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_FOR_ADVANCE
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  UNDER_DISPUTE
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum ContractStatus {
+  DRAFT
+  SIGNED
+  WAITING_FOR_ADVANCE
+  IN_PROGRESS
+  DELIVERED
+  VALIDATED
+  REFUSED
+  CANCELLED
+  DISPUTE
+}
+
+enum DeliveryStatus {
+  PENDING
+  APPROVED
+  CORRECTION_REQUESTED
+  REJECTED
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  PAYMENT
+  REFUND
+  COMMISSION
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum ReportReason {
+  FRAUD
+  SPAM
+  INAPPROPRIATE_CONTENT
+  PLAGIARISM
+  ABUSIVE_BEHAVIOR
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+  EXPIRED
+}
+
+model User {
+  id                Int             @id @default(autoincrement())
+  email             String          @unique
+  password          String
+  role              Role            @default(CLIENT)
+  isEmailVerified   Boolean         @default(false)
+  twoFactorEnabled  Boolean         @default(false)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  isOnline          Boolean         @default(false)
+  lastSeen          DateTime?
+  isSuspended       Boolean         @default(false)
+  suspendedUntil    DateTime?
+
+  // Profile relations
+  profile           Profile?
+  wallet            Wallet?
+
+  // Client relations
+  projects          Project[]       @relation("ClientProjects")
+  clientContracts   Contract[]      @relation("ClientContracts")
+  clientReviews     Review[]        @relation("ClientReviewsGiven") // Avis donnés par le client
+  clientReceivedReviews Review[]     @relation("ClientReviewsReceived") // Avis reçus par le client
+
+  // Freelancer relations
+  applications      Application[]   @relation("FreelancerApplications")
+  freelancerContracts Contract[]    @relation("FreelancerContracts")
+  freelancerReviews Review[]        @relation("FreelancerReviewsGiven") // Avis donnés par le freelance
+  freelancerReceivedReviews Review[] @relation("FreelancerReviewsReceived") // Avis reçus par le freelance
+  
+  // Invitations
+  invitationsSent     Invitation[] @relation("ClientInvitations")
+  invitationsReceived Invitation[] @relation("FreelancerInvitations")
+  
+  // Portfolios
+  portfolios        Portfolio[]
+  experiences       Experience[]
+  educations        Education[]
+  certificates      Certificate[]
+  languages         UserLanguage[]
+
+  // Shared relations
+  sessions          Session[]
+  passwordResets    PasswordReset[]
+  auditLogs         AuditLog[]
+  notifications     Notification[]
+  sentMessages      Message[]       @relation("SenderMessages")
+  conversations     ConversationMember[]
+  favoritesGiven    Favorite[]      @relation("FavoriteGiver")
+  favoritesReceived Favorite[]      @relation("FavoriteReceiver")
+  reportsCreated    Report[]        @relation("Reporter")
+  reportsAgainst    Report[]        @relation("ReportedUser")
+  tickets           Ticket[]
+  ticketMessages    TicketMessage[]
+  subscription      Subscription?
+
+  @@map("users")
+}
+
+model Profile {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName      String?
+  lastName       String?
+  avatarUrl      String?  @db.LongText
+  cvUrl          String?  @db.LongText
+  bio            String?  @db.Text
+  location       String?
+  phone          String?
+  companyName    String?  // Spécifique client
+  title          String?  // Spécifique freelance (ex: Développeur Fullstack)
+  hourlyRate     Decimal? @db.Decimal(10, 2) // Spécifique freelance
+  githubLink     String?
+  linkedinLink   String?
+  websiteLink    String?
+  idVerificationStatus String  @default("NOT_SUBMITTED") // NOT_SUBMITTED, PENDING, APPROVED, REJECTED
+  idType               String? // CNI, PASSPORT, PERMIS
+  idRectoUrl           String? @db.LongText
+  idVersoUrl           String? @db.LongText
+  idRejectionReason    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  skills         FreelancerSkill[]
+
+  @@map("profiles")
+}
+
+model Category {
+  id            Int           @id @default(autoincrement())
+  name          String        @unique
+  slug          String        @unique
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  subCategories SubCategory[]
+  projects      Project[]
+
+  @@map("categories")
+}
+
+model SubCategory {
+  id          Int       @id @default(autoincrement())
+  categoryId  Int
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name        String
+  slug        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  projects    Project[]
+
+  @@unique([categoryId, slug])
+  @@map("sub_categories")
+}
+
+model Skill {
+  id               Int               @id @default(autoincrement())
+  name             String            @unique
+  createdAt        DateTime          @default(now())
+  
+  freelancers      FreelancerSkill[]
+  projectSkills    ProjectSkill[]
+
+  @@map("skills")
+}
+
+model FreelancerSkill {
+  profileId Int
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  skillId   Int
+  skill     Skill   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([profileId, skillId])
+  @@map("freelancer_skills")
+}
+
+model Project {
+  id              Int             @id @default(autoincrement())
+  clientId        Int
+  client          User            @relation("ClientProjects", fields: [clientId], references: [id], onDelete: Cascade)
+  title           String
+  description     String          @db.Text
+  categoryId      Int
+  category        Category        @relation(fields: [categoryId], references: [id])
+  subCategoryId   Int
+  subCategory     SubCategory     @relation(fields: [subCategoryId], references: [id])
+  budget          Decimal         @db.Decimal(10, 2)
+  budgetType      BudgetType      @default(FIXED)
+  duration        String?
+  experienceLevel ExperienceLevel @default(INTERMEDIATE)
+  status          ProjectStatus   @default(OPEN)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  files           ProjectFile[]
+  skills          ProjectSkill[]
+  applications    Application[]
+  contracts       Contract[]
+  favorites       Favorite[]      @relation("FavoriteProject")
+  invitations     Invitation[]
+
+  @@map("projects")
+}
+
+model ProjectFile {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fileUrl   String
+  fileName  String
+  createdAt DateTime @default(now())
+
+  @@map("project_files")
+}
+
+model ProjectSkill {
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  skillId   Int
+  skill     Skill   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, skillId])
+  @@map("project_skills")
+}
+
+model Application {
+  id              Int               @id @default(autoincrement())
+  projectId       Int
+  project         Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  freelancerId    Int
+  freelancer      User              @relation("FreelancerApplications", fields: [freelancerId], references: [id], onDelete: Cascade)
+  bidAmount       Decimal           @db.Decimal(10, 2)
+  deliveryDelay   Int               // en jours
+  coverLetter     String            @db.Text
+  status          ApplicationStatus @default(PENDING)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@unique([projectId, freelancerId])
+  @@map("applications")
+}
+
+model Invitation {
+  id           Int      @id @default(autoincrement())
+  projectId    Int
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  clientId     Int
+  client       User     @relation("ClientInvitations", fields: [clientId], references: [id], onDelete: Cascade)
+  freelancerId Int
+  freelancer   User     @relation("FreelancerInvitations", fields: [freelancerId], references: [id], onDelete: Cascade)
+  message      String?  @db.Text
+  status       InvitationStatus @default(PENDING)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([projectId, freelancerId])
+  @@map("invitations")
+}
+
+model Contract {
+  id           Int            @id @default(autoincrement())
+  projectId    Int
+  project      Project        @relation(fields: [projectId], references: [id])
+  clientId     Int
+  client       User           @relation("ClientContracts", fields: [clientId], references: [id])
+  freelancerId Int
+  freelancer   User           @relation("FreelancerContracts", fields: [freelancerId], references: [id])
+  amount       Decimal        @db.Decimal(10, 2)
+  status              ContractStatus @default(DRAFT)
+  clientSignature     String?        @db.LongText
+  freelancerSignature String?        @db.LongText
+  advancePercentage   Int?           @default(0)
+  advanceStatus       String         @default("PENDING") // PENDING, CLAIMED, PAID
+  signedAt            DateTime?
+  startDate           DateTime?
+  endDate             DateTime?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  deliveries   Delivery[]
+  reviews      Review[]
+  payments     Payment[]
+
+  @@map("contracts")
+}
+
+model Delivery {
+  id          Int            @id @default(autoincrement())
+  contractId  Int
+  contract    Contract       @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  description String         @db.Text
+  githubLink  String?
+  externalLink String?
+  status      DeliveryStatus @default(PENDING)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  files       DeliveryFile[]
+
+  @@map("deliveries")
+}
+
+model DeliveryFile {
+  id         Int      @id @default(autoincrement())
+  deliveryId Int
+  delivery   Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  fileUrl    String
+  fileName   String
+  createdAt  DateTime @default(now())
+
+  @@map("delivery_files")
+}
+
+model Wallet {
+  id           Int           @id @default(autoincrement())
+  userId       Int           @unique
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance      Decimal       @default(0.00) @db.Decimal(12, 2)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  transactions Transaction[]
+
+  @@map("wallets")
+}
+
+model Transaction {
+  id          Int               @id @default(autoincrement())
+  walletId    Int
+  wallet      Wallet            @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  amount      Decimal           @db.Decimal(12, 2)
+  type        TransactionType
+  status      TransactionStatus @default(PENDING)
+  description String?
+  createdAt   DateTime          @default(now())
+
+  payments    Payment[]
+  withdrawals Withdrawal[]
+
+  @@map("transactions")
+}
+
+model Payment {
+  id            Int         @id @default(autoincrement())
+  contractId    Int
+  contract      Contract    @relation(fields: [contractId], references: [id])
+  transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  method        String      // Orange Money, Wave, CB, PayPal, etc.
+  feeAmount     Decimal     @db.Decimal(10, 2)
+  netAmount     Decimal     @db.Decimal(10, 2)
+  createdAt     DateTime    @default(now())
+
+  @@map("payments")
+}
+
+model Withdrawal {
+  id            Int         @id @default(autoincrement())
+  transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  method        String
+  accountNumber String
+  createdAt     DateTime    @default(now())
+
+  @@map("withdrawals")
+}
+
+model Conversation {
+  id        Int                  @id @default(autoincrement())
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+  
+  members   ConversationMember[]
+  messages  Message[]
+
+  @@map("conversations")
+}
+
+model ConversationMember {
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId         Int
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, userId])
+  @@map("conversation_members")
+}
+
+model Message {
+  id             Int          @id @default(autoincrement())
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       Int
+  sender         User         @relation("SenderMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  content        String?      @db.Text
+  fileUrl        String?
+  fileName       String?
+  fileType       String?      // image, pdf, video, etc.
+  isRead         Boolean      @default(false)
+  replyToId      Int?
+  replyTo        Message?     @relation("MessageReplies", fields: [replyToId], references: [id])
+  replies        Message[]    @relation("MessageReplies")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("messages")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  content   String   @db.Text
+  isRead    Boolean  @default(false)
+  type      String   // new_project, new_application, payment, message, etc.
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
+
+model Review {
+  id             Int      @id @default(autoincrement())
+  contractId     Int
+  contract       Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  reviewerId     Int      // User qui met l'avis
+  ratingQuality  Int      @default(5)
+  ratingCommunication Int @default(5)
+  ratingDeadline Int      @default(5)
+  ratingProfessionalism Int @default(5)
+  ratingAverage  Decimal  @db.Decimal(3, 2)
+  comment        String?  @db.Text
+  createdAt      DateTime @default(now())
+
+  // Relations explicites avec User pour les rôles
+  clientReviewerId Int?
+  clientReviewer   User?  @relation("ClientReviewsGiven", fields: [clientReviewerId], references: [id])
+  clientTargetId   Int?
+  clientTarget     User?  @relation("ClientReviewsReceived", fields: [clientTargetId], references: [id])
+
+  freelancerReviewerId Int?
+  freelancerReviewer   User?  @relation("FreelancerReviewsGiven", fields: [freelancerReviewerId], references: [id])
+  freelancerTargetId   Int?
+  freelancerTarget     User?  @relation("FreelancerReviewsReceived", fields: [freelancerTargetId], references: [id])
+
+  @@map("reviews")
+}
+
+model Favorite {
+  id           Int      @id @default(autoincrement())
+  userId       Int      // Celui qui ajoute en favori
+  user         User     @relation("FavoriteGiver", fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Un favori peut être un autre utilisateur (Freelancer pour un Client) ou un Projet (Projet pour un Freelancer)
+  targetUserId Int?     // Freelancer favori
+  targetUser   User?    @relation("FavoriteReceiver", fields: [targetUserId], references: [id], onDelete: Cascade)
+  
+  projectId    Int?     // Projet favori
+  project      Project? @relation("FavoriteProject", fields: [projectId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+
+  @@map("favorites")
+}
+
+model Report {
+  id             Int          @id @default(autoincrement())
+  reporterId     Int
+  reporter       User         @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUserId Int
+  reportedUser   User         @relation("ReportedUser", fields: [reportedUserId], references: [id], onDelete: Cascade)
+  reason         ReportReason
+  description    String       @db.Text
+  createdAt      DateTime     @default(now())
+
+  @@map("reports")
+}
+
+model Ticket {
+  id          Int             @id @default(autoincrement())
+  userId      Int
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String          @db.Text
+  status      TicketStatus    @default(OPEN)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  messages    TicketMessage[]
+
+  @@map("tickets")
+}
+
+model TicketMessage {
+  id        Int      @id @default(autoincrement())
+  ticketId  Int
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  senderId  Int
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@map("ticket_messages")
+}
+
+model Portfolio {
+  id           Int             @id @default(autoincrement())
+  userId       Int
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String
+  description  String?         @db.Text
+  githubLink   String?
+  demoLink     String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  
+  files        PortfolioFile[]
+
+  @@map("portfolios")
+}
+
+model PortfolioFile {
+  id          Int       @id @default(autoincrement())
+  portfolioId Int
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  fileUrl     String
+  fileName    String
+  fileType    String    // image, video, pdf
+  createdAt   DateTime  @default(now())
+
+  @@map("portfolio_files")
+}
+
+model Experience {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company      String
+  position     String
+  description  String?   @db.Text
+  startDate    DateTime
+  endDate      DateTime?
+  isCurrent    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+
+  @@map("experiences")
+}
+
+model Education {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school       String
+  degree       String
+  fieldOfStudy String?
+  startDate    DateTime
+  endDate      DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@map("educations")
+}
+
+model Certificate {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  issuer       String
+  issueDate    DateTime
+  expiryDate   DateTime?
+  credentialId String?
+  credentialUrl String?
+  createdAt    DateTime  @default(now())
+
+  @@map("certificates")
+}
+
+model UserLanguage {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language  String
+  proficiency String // A1, A2, B1, B2, C1, C2, Native
+  createdAt DateTime @default(now())
+
+  @@unique([userId, language])
+  @@map("user_languages")
+}
+
+model Setting {
+  id                 Int     @id @default(autoincrement())
+  commissionRate     Decimal @default(0.10) @db.Decimal(4, 2) // 10% par défaut
+  currency           String  @default("XOF")                  // Franc CFA (Afrique de l'Ouest) par exemple
+  emailNotification  Boolean @default(true)
+  smsNotification    Boolean @default(false)
+  pushNotification   Boolean @default(true)
+
+  @@map("settings")
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  details   String?  @db.Text
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshToken String   @unique @db.VarChar(191)
+  deviceInfo   String?
+  ipAddress    String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@map("sessions")
+}
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("password_resets")
+}
+
+model Subscription {
+  id                Int                @id @default(autoincrement())
+  userId            Int                @unique
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status            SubscriptionStatus @default(INACTIVE)
+  plan              String             @default("PREMIUM")
+  startDate         DateTime?
+  endDate           DateTime?
+  waveTransactionId String?            @unique
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@map("subscriptions")
+}

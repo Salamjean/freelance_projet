@@ -1,0 +1,20 @@
+import React from 'react';
+import { CreditCard } from 'lucide-react';
+
+export const AdminPayments: React.FC = () => {
+  return (
+    <div className="admin-dashboard-page">
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Gestion des Paiements</h1>
+          <p className="page-subtitle">Historique des transactions et reversements</p>
+        </div>
+      </div>
+      <div className="card" style={{ padding: '40px', textAlign: 'center', marginTop: '20px' }}>
+        <CreditCard size={48} color="#9ca3af" style={{ margin: '0 auto 16px', display: 'block' }} />
+        <h2 style={{ fontSize: '1.2rem', color: '#4b5563', marginBottom: '8px' }}>Page en construction</h2>
+        <p style={{ color: '#6b7280' }}>Cette fonctionnalité sera bientôt disponible.</p>
+      </div>
+    </div>
+  );
+};
