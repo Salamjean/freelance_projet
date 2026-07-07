@@ -26,7 +26,7 @@ export const AdminCategories: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://192.168.1.18:3000/api/admin/categories');
+      const response = await axios.get('http://localhost:3000/api/admin/categories');
       setCategories(response.data);
     } catch (err) {
       console.error("Erreur lors de la récupération des catégories:", err);
@@ -58,7 +58,7 @@ export const AdminCategories: React.FC = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.post('http://192.168.1.18:3000/api/admin/categories', result.value);
+          await axios.post('http://localhost:3000/api/admin/categories', result.value);
           Swal.fire('Succès', 'Catégorie créée !', 'success');
           fetchCategories();
         } catch (error) {
@@ -87,7 +87,7 @@ export const AdminCategories: React.FC = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.put(`http://192.168.1.18:3000/api/admin/categories/${category.id}`, result.value);
+          await axios.put(`http://localhost:3000/api/admin/categories/${category.id}`, result.value);
           Swal.fire('Succès', 'Catégorie modifiée !', 'success');
           fetchCategories();
         } catch (error) {
@@ -116,7 +116,7 @@ export const AdminCategories: React.FC = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.post(`http://192.168.1.18:3000/api/admin/categories/${categoryId}/subcategories`, result.value);
+          await axios.post(`http://localhost:3000/api/admin/categories/${categoryId}/subcategories`, result.value);
           Swal.fire({ title: 'Succès', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
           fetchCategories();
         } catch (error) {
@@ -137,7 +137,7 @@ export const AdminCategories: React.FC = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://192.168.1.18:3000/api/admin/subcategories/${subId}`);
+          await axios.delete(`http://localhost:3000/api/admin/subcategories/${subId}`);
           Swal.fire({ title: 'Supprimée', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
           fetchCategories();
         } catch (error) {
@@ -164,7 +164,7 @@ export const AdminCategories: React.FC = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://192.168.1.18:3000/api/admin/categories/${id}`);
+          await axios.delete(`http://localhost:3000/api/admin/categories/${id}`);
           Swal.fire('Supprimé !', 'La catégorie a été supprimée.', 'success');
           fetchCategories();
         } catch (error) {

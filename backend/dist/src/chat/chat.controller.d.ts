@@ -63,15 +63,15 @@ export declare class ChatController {
         };
         replyTo: {
             id: number;
-            fileUrl: string | null;
-            fileName: string | null;
-            content: string | null;
             sender: {
                 profile: {
                     firstName: string | null;
                     lastName: string | null;
                 } | null;
             };
+            fileUrl: string | null;
+            fileName: string | null;
+            content: string | null;
         } | null;
     } & {
         id: number;

@@ -34,7 +34,7 @@ export const ClientHistory: React.FC<{ userId: number | null }> = ({ userId }) =
   useEffect(() => {
     const fetchContracts = async () => {
       try {
-        const res = await axios.get(`http://192.168.1.18:3000/api/client/${userId}/contracts`);
+        const res = await axios.get(`http://localhost:3000/api/client/${userId}/contracts`);
         // On ne garde que les contrats terminés (VALIDATED)
         const completed = res.data.filter((c: Contract) => c.status === 'VALIDATED');
         setContracts(completed);

@@ -42,7 +42,7 @@ export const MyApplications: React.FC<MyApplicationsProps> = ({ userId }) => {
     const fetchApplications = async () => {
       if (!userId) return;
       try {
-        const response = await axios.get(`http://192.168.1.18:3000/api/freelance/${userId}/applications`);
+        const response = await axios.get(`http://localhost:3000/api/freelance/${userId}/applications`);
         setApplications(response.data || []);
       } catch (err) {
         console.error('Erreur de chargement des candidatures', err);
@@ -124,7 +124,7 @@ export const MyApplications: React.FC<MyApplicationsProps> = ({ userId }) => {
                   <h3 className="project-title">{app.project?.title}</h3>
                   <div className="client-info">
                     {app.project?.client?.profile?.avatarUrl ? (
-                      <img src={`http://192.168.1.18:3000${app.project.client.profile.avatarUrl}`} alt="Client" className="client-avatar-mini" />
+                      <img src={`http://localhost:3000${app.project.client.profile.avatarUrl}`} alt="Client" className="client-avatar-mini" />
                     ) : (
                       <div className="client-avatar-placeholder">
                         {(app.project?.client?.profile?.firstName?.[0] || 'C').toUpperCase()}

@@ -17,7 +17,7 @@ export const Subscription: React.FC<SubscriptionProps> = ({ userId }) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        'http://192.168.1.18:3000/api/subscriptions/checkout',
+        'http://localhost:3000/api/subscriptions/checkout',
         {},
         {
           headers: {

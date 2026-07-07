@@ -49,7 +49,7 @@ export const FreelancerHistory: React.FC<FreelancerHistoryProps> = ({ userId }) 
     if (!userId) return;
     const fetchMissions = async () => {
       try {
-        const res = await axios.get(`http://192.168.1.18:3000/api/freelance/${userId}/missions`);
+        const res = await axios.get(`http://localhost:3000/api/freelance/${userId}/missions`);
         const completed = res.data.filter((m: Mission) => m.status === 'VALIDATED' || m.status === 'COMPLETED');
         setMissions(completed);
       } catch (err) {

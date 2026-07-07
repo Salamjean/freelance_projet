@@ -33,7 +33,7 @@ export const ClientHome: React.FC<ClientHomeProps> = ({ userId, onNavigate }) =>
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get(`http://192.168.1.18:3000/api/client/${userId || 1}/dashboard`);
+        const response = await axios.get(`http://localhost:3000/api/client/${userId || 1}/dashboard`);
         setStats(response.data);
       } catch (err) {
         console.log("Le backend n'a pas répondu, utilisation de données simulées.");

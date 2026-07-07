@@ -381,7 +381,46 @@
   }
 
   .profile-edit-hero-body {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     padding: 0 16px 20px;
+  }
+  
+  .profile-edit-hero-info {
+    padding-top: 0;
+  }
+
+  .profile-edit-avatar-wrap {
+    margin-top: -50px;
+  }
+
+  .cv-form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .profile-save-bar {
+    flex-direction: column;
+    padding: 16px;
+  }
+  
+  .btn-save-profile,
+  .btn-cancel-profile {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .profile-section-card {
+    padding: 20px 16px;
+  }
+  
+  .skill-add-row {
+    flex-direction: column;
+  }
+  
+  .btn-add-skill {
+    width: 100%;
+    justify-content: center;
   }
 }
 

@@ -18,6 +18,11 @@ const jwt_auth_guard_1 = require("./jwt-auth.guard");
 const auth_service_1 = require("./auth.service");
 const register_dto_1 = require("./dto/register.dto");
 const login_dto_1 = require("./dto/login.dto");
+const forgot_password_dto_1 = require("./dto/forgot-password.dto");
+const reset_password_dto_1 = require("./dto/reset-password.dto");
+const verify_email_dto_1 = require("./dto/verify-email.dto");
+const secondary_email_dto_1 = require("./dto/secondary-email.dto");
+const preferred_email_dto_1 = require("./dto/preferred-email.dto");
 const swagger_1 = require("@nestjs/swagger");
 let AuthController = class AuthController {
     authService;
@@ -64,6 +69,30 @@ let AuthController = class AuthController {
         const ipAddress = req.ip || req.socket.remoteAddress;
         return this.authService.login(dto, userAgent, ipAddress);
     }
+    async forgotPassword(dto) {
+        return this.authService.requestPasswordReset(dto.email);
+    }
+    async resetPassword(dto) {
+        return this.authService.resetPassword(dto.email, dto.otp, dto.newPassword);
+    }
+    async sendEmailVerification(userId) {
+        return this.authService.sendEmailVerification(userId);
+    }
+    async setSecondaryEmail(userId, dto) {
+        return this.authService.setSecondaryEmail(userId, dto.secondaryEmail);
+    }
+    async sendSecondaryEmailVerification(userId) {
+        return this.authService.sendSecondaryEmailVerification(userId);
+    }
+    async setPreferredEmail(userId, dto) {
+        return this.authService.setPreferredEmailType(userId, dto.preferredEmailType);
+    }
+    async verifyEmail(dto) {
+        return this.authService.verifyEmailToken(dto.token);
+    }
+    async verifySecondaryEmail(dto) {
+        return this.authService.verifySecondaryEmailToken(dto.token);
+    }
     async refresh(refreshToken, req, userAgent) {
         if (!refreshToken) {
             throw new common_1.BadRequestException('Refresh token manquant');
@@ -88,7 +117,9 @@ exports.AuthController = AuthController;
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('profile/:userId'),
-    (0, swagger_1.ApiOperation)({ summary: 'Obtenir le profil complet d\'un utilisateur par son ID' }),
+    (0, swagger_1.ApiOperation)({
+        summary: "Obtenir le profil complet d'un utilisateur par son ID",
+    }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Profil récupéré avec succès.' }),
     __param(0, (0, common_1.Param)('userId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -98,7 +129,7 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Patch)('profile/:userId'),
-    (0, swagger_1.ApiOperation)({ summary: 'Mettre à jour le profil d\'un utilisateur' }),
+    (0, swagger_1.ApiOperation)({ summary: "Mettre à jour le profil d'un utilisateur" }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Profil mis à jour avec succès.' }),
     __param(0, (0, common_1.Param)('userId', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
@@ -109,7 +140,7 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('profile/:userId/verify-identity'),
-    (0, swagger_1.ApiOperation)({ summary: 'Soumettre une demande de vérification d\'identité' }),
+    (0, swagger_1.ApiOperation)({ summary: "Soumettre une demande de vérification d'identité" }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Demande soumise avec succès.' }),
     __param(0, (0, common_1.Param)('userId', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
@@ -201,7 +232,10 @@ __decorate([
     (0, common_1.Post)('register'),
     (0, swagger_1.ApiOperation)({ summary: 'Créer un compte client ou freelance' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Utilisateur créé avec succès.' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Données invalides ou e-mail déjà existant.' }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'Données invalides ou e-mail déjà existant.',
+    }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [register_dto_1.RegisterDto]),
@@ -209,7 +243,7 @@ __decorate([
 ], AuthController.prototype, "register", null);
 __decorate([
     (0, common_1.Post)('login'),
-    (0, swagger_1.ApiOperation)({ summary: 'Connexion de l\'utilisateur et retour des tokens' }),
+    (0, swagger_1.ApiOperation)({ summary: "Connexion de l'utilisateur et retour des tokens" }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Connexion réussie.' }),
     (0, swagger_1.ApiResponse)({ status: 401, description: 'Identifiants invalides.' }),
     __param(0, (0, common_1.Body)()),
@@ -220,8 +254,97 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
 __decorate([
+    (0, common_1.Post)('forgot-password'),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Demander un code OTP de réinitialisation de mot de passe',
+    }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Demande traitée avec succès.' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [forgot_password_dto_1.ForgotPasswordDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "forgotPassword", null);
+__decorate([
+    (0, common_1.Post)('reset-password'),
+    (0, swagger_1.ApiOperation)({ summary: 'Réinitialiser le mot de passe avec code OTP' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Mot de passe réinitialisé avec succès.',
+    }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [reset_password_dto_1.ResetPasswordDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "resetPassword", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('profile/:userId/send-email-verification'),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Envoyer un e-mail de vérification pour le freelance',
+    }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'E-mail de vérification envoyé.' }),
+    __param(0, (0, common_1.Param)('userId', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "sendEmailVerification", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Patch)('profile/:userId/secondary-email'),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Ajouter ou modifier le second e-mail du freelance',
+    }),
+    __param(0, (0, common_1.Param)('userId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, secondary_email_dto_1.SecondaryEmailDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "setSecondaryEmail", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('profile/:userId/send-secondary-email-verification'),
+    (0, swagger_1.ApiOperation)({
+        summary: "Envoyer l'e-mail de vérification du second e-mail",
+    }),
+    __param(0, (0, common_1.Param)('userId', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "sendSecondaryEmailVerification", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Patch)('profile/:userId/preferred-email'),
+    (0, swagger_1.ApiOperation)({ summary: 'Définir le mail principal du freelance' }),
+    __param(0, (0, common_1.Param)('userId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, preferred_email_dto_1.PreferredEmailDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "setPreferredEmail", null);
+__decorate([
+    (0, common_1.Post)('verify-email'),
+    (0, swagger_1.ApiOperation)({ summary: 'Confirmer la vérification e-mail avec token' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'E-mail vérifié avec succès.' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [verify_email_dto_1.VerifyEmailDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyEmail", null);
+__decorate([
+    (0, common_1.Post)('verify-secondary-email'),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Confirmer la vérification du second e-mail avec token',
+    }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [verify_email_dto_1.VerifyEmailDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifySecondaryEmail", null);
+__decorate([
     (0, common_1.Post)('refresh'),
-    (0, swagger_1.ApiOperation)({ summary: 'Renouveler l\'access token à partir du refresh token' }),
+    (0, swagger_1.ApiOperation)({
+        summary: "Renouveler l'access token à partir du refresh token",
+    }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Tokens rafraîchis avec succès.' }),
     (0, swagger_1.ApiResponse)({ status: 401, description: 'Session expirée ou invalide.' }),
     __param(0, (0, common_1.Body)('refreshToken')),
@@ -233,7 +356,9 @@ __decorate([
 ], AuthController.prototype, "refresh", null);
 __decorate([
     (0, common_1.Post)('logout'),
-    (0, swagger_1.ApiOperation)({ summary: 'Déconnecter l\'utilisateur et invalider son refresh token' }),
+    (0, swagger_1.ApiOperation)({
+        summary: "Déconnecter l'utilisateur et invalider son refresh token",
+    }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Déconnexion réussie.' }),
     __param(0, (0, common_1.Body)('refreshToken')),
     __metadata("design:type", Function),
@@ -243,8 +368,11 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('profile/:userId/notifications'),
-    (0, swagger_1.ApiOperation)({ summary: 'Obtenir les notifications de l\'utilisateur' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Notifications récupérées avec succès.' }),
+    (0, swagger_1.ApiOperation)({ summary: "Obtenir les notifications de l'utilisateur" }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Notifications récupérées avec succès.',
+    }),
     __param(0, (0, common_1.Param)('userId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -254,7 +382,10 @@ __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Put)('notifications/:notificationId/read'),
     (0, swagger_1.ApiOperation)({ summary: 'Marquer une notification comme lue' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Notification marquée comme lue avec succès.' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Notification marquée comme lue avec succès.',
+    }),
     __param(0, (0, common_1.Param)('notificationId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),

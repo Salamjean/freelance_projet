@@ -33,7 +33,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({ userId, onPublishProje
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(`http://192.168.1.18:3000/api/client/${userId || 1}/dashboard`);
+        const response = await axios.get(`http://localhost:3000/api/client/${userId || 1}/dashboard`);
         // Le dashboard renvoie { projects, activeContractsCount, totalExpenses }
         const mappedProjects = (response.data.projects || []).map((p: any) => ({
           ...p,
@@ -70,7 +70,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({ userId, onPublishProje
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://192.168.1.18:3000/api/client/projects/${projectId}`);
+          await axios.delete(`http://localhost:3000/api/client/projects/${projectId}`);
           
           Swal.fire({
             title: 'Supprimé !',

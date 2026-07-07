@@ -1,10 +1,13 @@
 import { JwtService } from '@nestjs/jwt';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { PreferredEmailOption } from './dto/preferred-email.dto';
 export declare class AuthService {
     private prisma;
     private jwtService;
+    private transporter;
     constructor(prisma: PrismaService, jwtService: JwtService);
     register(dto: RegisterDto): Promise<{
         message: string;
@@ -30,7 +33,7 @@ export declare class AuthService {
                 phone: string | null;
                 companyName: string | null;
                 title: string | null;
-                hourlyRate: import("@prisma/client-runtime-utils").Decimal | null;
+                hourlyRate: Prisma.Decimal | null;
                 githubLink: string | null;
                 linkedinLink: string | null;
                 websiteLink: string | null;
@@ -51,17 +54,48 @@ export declare class AuthService {
     logout(refreshToken: string): Promise<{
         message: string;
     }>;
+    requestPasswordReset(email: string): Promise<{
+        message: string;
+    }>;
+    sendEmailVerification(userId: number): Promise<{
+        message: string;
+    }>;
+    setSecondaryEmail(userId: number, secondaryEmail: string): Promise<{
+        message: string;
+        secondaryEmail: string;
+        isSecondaryEmailVerified: boolean;
+    }>;
+    sendSecondaryEmailVerification(userId: number): Promise<{
+        message: string;
+    }>;
+    verifySecondaryEmailToken(token: string): Promise<{
+        message: string;
+    }>;
+    setPreferredEmailType(userId: number, preferredEmailType: PreferredEmailOption): Promise<{
+        message: string;
+        preferredEmailType: PreferredEmailOption;
+    }>;
+    verifyEmailToken(token: string): Promise<{
+        message: string;
+    }>;
+    resetPassword(email: string, otp: string, newPassword: string): Promise<{
+        message: string;
+    }>;
     private generateAccessToken;
     private generateRefreshToken;
     getProfile(userId: number): Promise<{
         email: string;
+        isEmailVerified: boolean;
+        secondaryEmail: string | null;
+        isSecondaryEmailVerified: boolean;
+        preferredEmailType: import("@prisma/client").$Enums.PreferredEmailType;
         firstName: string;
         lastName: string;
         title: string;
         bio: string;
         location: string;
         phone: string;
-        hourlyRate: import("@prisma/client-runtime-utils").Decimal | null;
+        hourlyRate: Prisma.Decimal | null;
         githubLink: string;
         linkedinLink: string;
         websiteLink: string;
@@ -153,7 +187,7 @@ export declare class AuthService {
         position: string;
         isCurrent: boolean;
     }>;
-    deleteExperience(userId: number, id: number): Promise<import("@prisma/client").Prisma.BatchPayload>;
+    deleteExperience(userId: number, id: number): Promise<Prisma.BatchPayload>;
     addEducation(userId: number, dto: {
         school: string;
         degree: string;
@@ -170,7 +204,7 @@ export declare class AuthService {
         degree: string;
         fieldOfStudy: string | null;
     }>;
-    deleteEducation(userId: number, id: number): Promise<import("@prisma/client").Prisma.BatchPayload>;
+    deleteEducation(userId: number, id: number): Promise<Prisma.BatchPayload>;
     addCertificate(userId: number, dto: {
         name: string;
         issuer: string;
@@ -188,7 +222,7 @@ export declare class AuthService {
         credentialId: string | null;
         credentialUrl: string | null;
     }>;
-    deleteCertificate(userId: number, id: number): Promise<import("@prisma/client").Prisma.BatchPayload>;
+    deleteCertificate(userId: number, id: number): Promise<Prisma.BatchPayload>;
     addPortfolio(userId: number, dto: {
         title: string;
         description?: string;
@@ -216,7 +250,7 @@ export declare class AuthService {
         description: string | null;
         demoLink: string | null;
     }) | null>;
-    deletePortfolio(userId: number, id: number): Promise<import("@prisma/client").Prisma.BatchPayload>;
+    deletePortfolio(userId: number, id: number): Promise<Prisma.BatchPayload>;
     submitVerification(userId: number, dto: {
         idType: string;
         idRectoUrl: string;
@@ -236,7 +270,7 @@ export declare class AuthService {
             phone: string | null;
             companyName: string | null;
             title: string | null;
-            hourlyRate: import("@prisma/client-runtime-utils").Decimal | null;
+            hourlyRate: Prisma.Decimal | null;
             githubLink: string | null;
             linkedinLink: string | null;
             websiteLink: string | null;
@@ -263,7 +297,7 @@ export declare class AuthService {
             phone: string | null;
             companyName: string | null;
             title: string | null;
-            hourlyRate: import("@prisma/client-runtime-utils").Decimal | null;
+            hourlyRate: Prisma.Decimal | null;
             githubLink: string | null;
             linkedinLink: string | null;
             websiteLink: string | null;

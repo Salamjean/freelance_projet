@@ -20,7 +20,6 @@ import {
   GraduationCap,
   Award,
   FolderOpen,
-  Calendar,
   Trash2,
 } from "lucide-react";
 import axios from "axios";
@@ -82,6 +81,10 @@ interface ProfileData {
   firstName: string;
   lastName: string;
   email: string;
+  isEmailVerified: boolean;
+  secondaryEmail: string;
+  isSecondaryEmailVerified: boolean;
+  preferredEmailType: "PRIMARY" | "SECONDARY";
   title: string;
   bio: string;
   location: string;
@@ -170,6 +173,17 @@ function getInitials(
   return email[0]?.toUpperCase() || "F";
 }
 
+function getApiErrorMessage(err: any, fallback: string): string {
+  const message = err?.response?.data?.message;
+  if (Array.isArray(message)) {
+    return message.join("\n");
+  }
+  if (typeof message === "string" && message.trim()) {
+    return message;
+  }
+  return fallback;
+}
+
 // ─── Composant ────────────────────────────────────────────────────────────────
 
 export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
@@ -178,6 +192,12 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
 }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [sendingEmailVerification, setSendingEmailVerification] =
+    useState(false);
+  const [savingSecondaryEmail, setSavingSecondaryEmail] = useState(false);
+  const [sendingSecondaryVerification, setSendingSecondaryVerification] =
+    useState(false);
+  const [updatingPreferredEmail, setUpdatingPreferredEmail] = useState(false);
   const [newSkill, setNewSkill] = useState("");
   const [activeTab, setActiveTab] = useState<
     "general" | "cv" | "portfolio" | "verification"
@@ -226,7 +246,7 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
       return;
     try {
       const res = await axios.post(
-        `http://192.168.1.18:3000/api/auth/profile/${userId}/experience`,
+        `http://localhost:3000/api/auth/profile/${userId}/experience`,
         expForm,
       );
       setProfile((p) => ({ ...p, experiences: [res.data, ...p.experiences] }));
@@ -248,7 +268,7 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
     if (!userId) return;
     try {
       await axios.delete(
-        `http://192.168.1.18:3000/api/auth/profile/${userId}/experience/${id}`,
+        `http://localhost:3000/api/auth/profile/${userId}/experience/${id}`,
       );
       setProfile((p) => ({
         ...p,
@@ -264,7 +284,7 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
       return;
     try {
       const res = await axios.post(
-        `http://192.168.1.18:3000/api/auth/profile/${userId}/education`,
+        `http://localhost:3000/api/auth/profile/${userId}/education`,
         eduForm,
       );
       setProfile((p) => ({ ...p, educations: [res.data, ...p.educations] }));
@@ -285,7 +305,7 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
     if (!userId) return;
     try {
       await axios.delete(
-        `http://192.168.1.18:3000/api/auth/profile/${userId}/education/${id}`,
+        `http://localhost:3000/api/auth/profile/${userId}/education/${id}`,
       );
       setProfile((p) => ({
         ...p,
@@ -301,7 +321,7 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
       return;
     try {
       const res = await axios.post(
-        `http://192.168.1.18:3000/api/auth/profile/${userId}/certificate`,
+        `http://localhost:3000/api/auth/profile/${userId}/certificate`,
         certForm,
       );
       setProfile((p) => ({
@@ -325,7 +345,7 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
     if (!userId) return;
     try {
       await axios.delete(
-        `http://192.168.1.18:3000/api/auth/profile/${userId}/certificate/${id}`,
+        `http://localhost:3000/api/auth/profile/${userId}/certificate/${id}`,
       );
       setProfile((p) => ({
         ...p,
@@ -340,7 +360,7 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
     if (!userId || !portForm.title) return;
     try {
       const res = await axios.post(
-        `http://192.168.1.18:3000/api/auth/profile/${userId}/portfolio`,
+        `http://localhost:3000/api/auth/profile/${userId}/portfolio`,
         portForm,
       );
       setProfile((p) => ({ ...p, portfolios: [res.data, ...p.portfolios] }));
@@ -355,7 +375,7 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
     if (!userId) return;
     try {
       await axios.delete(
-        `http://192.168.1.18:3000/api/auth/profile/${userId}/portfolio/${id}`,
+        `http://localhost:3000/api/auth/profile/${userId}/portfolio/${id}`,
       );
       setProfile((p) => ({
         ...p,
@@ -408,7 +428,7 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
     setSubmitting(true);
     try {
       await axios.post(
-        `http://192.168.1.18:3000/api/auth/profile/${userId}/verify-identity`,
+        `http://localhost:3000/api/auth/profile/${userId}/verify-identity`,
         {
           idType,
           idRectoUrl: idRecto,
@@ -451,6 +471,10 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
     firstName: "",
     lastName: "",
     email: "",
+    isEmailVerified: false,
+    secondaryEmail: "",
+    isSecondaryEmailVerified: false,
+    preferredEmailType: "PRIMARY",
     title: "",
     bio: "",
     location: "",
@@ -550,9 +574,181 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
     if (!profile.cvUrl) return;
     const newWindow = window.open();
     if (newWindow) {
-      newWindow.document.write(
-        `<iframe src="${profile.cvUrl}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`,
+      newWindow.document.body.style.margin = "0";
+      const iframe = newWindow.document.createElement("iframe");
+      iframe.src = profile.cvUrl;
+      iframe.frameBorder = "0";
+      iframe.style.border = "0";
+      iframe.style.position = "absolute";
+      iframe.style.top = "0px";
+      iframe.style.left = "0px";
+      iframe.style.bottom = "0px";
+      iframe.style.right = "0px";
+      iframe.style.width = "100%";
+      iframe.style.height = "100%";
+      iframe.allowFullscreen = true;
+      newWindow.document.body.appendChild(iframe);
+    }
+  };
+
+  const handleSendEmailVerification = async () => {
+    if (!userId) return;
+    setSendingEmailVerification(true);
+    try {
+      const res = await axios.post(
+        `http://localhost:3000/api/auth/profile/${userId}/send-email-verification`,
       );
+      Swal.fire({
+        title: "E-mail envoyé",
+        text:
+          res.data?.message ||
+          "Vérifiez votre boîte de réception pour confirmer votre adresse e-mail.",
+        icon: "success",
+        confirmButtonColor: "#2563eb",
+        heightAuto: false,
+      });
+    } catch (err: any) {
+      Swal.fire({
+        title: "Erreur",
+        text:
+          err.response?.data?.message ||
+          "Impossible d'envoyer l'e-mail de vérification.",
+        icon: "error",
+        confirmButtonColor: "#2563eb",
+        heightAuto: false,
+      });
+    } finally {
+      setSendingEmailVerification(false);
+    }
+  };
+
+  const handleSaveSecondaryEmail = async () => {
+    if (!userId) return;
+    const normalizedSecondaryEmail = profile.secondaryEmail
+      .trim()
+      .toLowerCase();
+
+    if (!normalizedSecondaryEmail) {
+      Swal.fire({
+        title: "Information manquante",
+        text: "Veuillez renseigner le second e-mail.",
+        icon: "warning",
+        confirmButtonColor: "#2563eb",
+        heightAuto: false,
+      });
+      return;
+    }
+
+    if (normalizedSecondaryEmail === profile.email.trim().toLowerCase()) {
+      Swal.fire({
+        title: "Adresse invalide",
+        text: "Le deuxième e-mail doit être différent de votre e-mail principal.",
+        icon: "warning",
+        confirmButtonColor: "#2563eb",
+        heightAuto: false,
+      });
+      return;
+    }
+
+    setSavingSecondaryEmail(true);
+    try {
+      const res = await axios.patch(
+        `http://localhost:3000/api/auth/profile/${userId}/secondary-email`,
+        { secondaryEmail: normalizedSecondaryEmail },
+      );
+      setProfile((prev) => ({
+        ...prev,
+        secondaryEmail: res.data?.secondaryEmail || normalizedSecondaryEmail,
+        isSecondaryEmailVerified: false,
+        preferredEmailType: "PRIMARY",
+      }));
+      Swal.fire({
+        title: "Second e-mail enregistré",
+        text: "Vous devez maintenant vérifier ce second e-mail.",
+        icon: "success",
+        confirmButtonColor: "#2563eb",
+        heightAuto: false,
+      });
+    } catch (err: any) {
+      Swal.fire({
+        title: "Erreur",
+        text: getApiErrorMessage(
+          err,
+          "Impossible d'enregistrer le second e-mail.",
+        ),
+        icon: "error",
+        confirmButtonColor: "#2563eb",
+        heightAuto: false,
+      });
+    } finally {
+      setSavingSecondaryEmail(false);
+    }
+  };
+
+  const handleSendSecondaryEmailVerification = async () => {
+    if (!userId) return;
+    setSendingSecondaryVerification(true);
+    try {
+      const res = await axios.post(
+        `http://localhost:3000/api/auth/profile/${userId}/send-secondary-email-verification`,
+      );
+      Swal.fire({
+        title: "E-mail envoyé",
+        text:
+          res.data?.message ||
+          "Un mail de vérification a été envoyé au second e-mail.",
+        icon: "success",
+        confirmButtonColor: "#2563eb",
+        heightAuto: false,
+      });
+    } catch (err: any) {
+      Swal.fire({
+        title: "Erreur",
+        text:
+          err.response?.data?.message ||
+          "Impossible d'envoyer le mail de vérification secondaire.",
+        icon: "error",
+        confirmButtonColor: "#2563eb",
+        heightAuto: false,
+      });
+    } finally {
+      setSendingSecondaryVerification(false);
+    }
+  };
+
+  const handleSetPreferredEmail = async (
+    preferredEmailType: "PRIMARY" | "SECONDARY",
+  ) => {
+    if (!userId) return;
+    setUpdatingPreferredEmail(true);
+    try {
+      await axios.patch(
+        `http://localhost:3000/api/auth/profile/${userId}/preferred-email`,
+        { preferredEmailType },
+      );
+      setProfile((prev) => ({ ...prev, preferredEmailType }));
+      Swal.fire({
+        title: "Mail principal mis à jour",
+        text:
+          preferredEmailType === "SECONDARY"
+            ? "Le second e-mail est maintenant votre mail principal."
+            : "Votre mail principal est redevenu l'e-mail d'origine.",
+        icon: "success",
+        confirmButtonColor: "#2563eb",
+        heightAuto: false,
+      });
+    } catch (err: any) {
+      Swal.fire({
+        title: "Erreur",
+        text:
+          err.response?.data?.message ||
+          "Impossible de modifier le mail principal.",
+        icon: "error",
+        confirmButtonColor: "#2563eb",
+        heightAuto: false,
+      });
+    } finally {
+      setUpdatingPreferredEmail(false);
     }
   };
 
@@ -565,13 +761,17 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
     const fetchProfile = async () => {
       try {
         const res = await axios.get(
-          `http://192.168.1.18:3000/api/auth/profile/${userId}`,
+          `http://localhost:3000/api/auth/profile/${userId}`,
         );
         const data = res.data;
         setProfile({
           firstName: data.firstName || "",
           lastName: data.lastName || "",
           email: data.email || "",
+          isEmailVerified: Boolean(data.isEmailVerified),
+          secondaryEmail: data.secondaryEmail || "",
+          isSecondaryEmailVerified: Boolean(data.isSecondaryEmailVerified),
+          preferredEmailType: data.preferredEmailType || "PRIMARY",
           title: data.title || "",
           bio: data.bio || "",
           location: data.location || "",
@@ -688,7 +888,7 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
         : "";
       const parsedRate = rawRate ? parseFloat(rawRate) : null;
 
-      await axios.patch(`http://192.168.1.18:3000/api/auth/profile/${userId}`, {
+      await axios.patch(`http://localhost:3000/api/auth/profile/${userId}`, {
         firstName: profile.firstName,
         lastName: profile.lastName,
         title: profile.title,
@@ -1138,18 +1338,242 @@ export const FreelancerProfileEdit: React.FC<FreelancerProfileEditProps> = ({
                     />
                   </div>
                   <div className="form-field full-width">
-                    <label>Adresse E-mail (Non modifiable)</label>
+                    <label>Adresse E-mail</label>
                     <input
                       type="email"
                       value={profile.email}
                       disabled
                       style={{
-                        backgroundColor: "#f3f4f6",
+                        backgroundColor: profile.isEmailVerified
+                          ? "#f3f4f6"
+                          : "#ffffff",
                         cursor: "not-allowed",
-                        color: "#6b7280",
+                        color: profile.isEmailVerified ? "#6b7280" : "#1f2937",
+                        border: profile.isEmailVerified
+                          ? "1px solid #e5e7eb"
+                          : "1.5px solid #fbbf24",
                       }}
                     />
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        marginTop: "8px",
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      {profile.isEmailVerified ? (
+                        <span
+                          style={{
+                            fontSize: "12px",
+                            color: "#15803d",
+                            fontWeight: 600,
+                          }}
+                        >
+                          Email vérifié
+                        </span>
+                      ) : (
+                        <>
+                          <span
+                            style={{
+                              fontSize: "12px",
+                              color: "#b45309",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Email non vérifié
+                          </span>
+                          <button
+                            type="button"
+                            onClick={handleSendEmailVerification}
+                            disabled={sendingEmailVerification}
+                            style={{
+                              padding: "6px 10px",
+                              borderRadius: "8px",
+                              border: "1px solid #bfdbfe",
+                              background: "#eff6ff",
+                              color: "#1d4ed8",
+                              fontSize: "12px",
+                              fontWeight: 600,
+                              cursor: sendingEmailVerification
+                                ? "not-allowed"
+                                : "pointer",
+                              opacity: sendingEmailVerification ? 0.7 : 1,
+                            }}
+                          >
+                            {sendingEmailVerification
+                              ? "Envoi..."
+                              : "Vérifier mon email"}
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
+
+                  <div className="form-field full-width">
+                    <label>Deuxième adresse e-mail</label>
+                    <div
+                      style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}
+                    >
+                      <input
+                        type="email"
+                        value={profile.secondaryEmail}
+                        onChange={(e) =>
+                          setProfile((prev) => ({
+                            ...prev,
+                            secondaryEmail: e.target.value,
+                          }))
+                        }
+                        placeholder="ex: backup@exemple.com"
+                        style={{ flex: 1, minWidth: "220px" }}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSaveSecondaryEmail}
+                        disabled={savingSecondaryEmail}
+                        style={{
+                          padding: "8px 12px",
+                          borderRadius: "8px",
+                          border: "1px solid #bfdbfe",
+                          background: "#eff6ff",
+                          color: "#1d4ed8",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          cursor: savingSecondaryEmail
+                            ? "not-allowed"
+                            : "pointer",
+                          opacity: savingSecondaryEmail ? 0.7 : 1,
+                        }}
+                      >
+                        {savingSecondaryEmail
+                          ? "Enregistrement..."
+                          : "Enregistrer"}
+                      </button>
+                    </div>
+
+                    {profile.secondaryEmail ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          marginTop: "8px",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: "12px",
+                            color: profile.isSecondaryEmailVerified
+                              ? "#15803d"
+                              : "#b45309",
+                            fontWeight: 600,
+                          }}
+                        >
+                          {profile.isSecondaryEmailVerified
+                            ? "Second e-mail vérifié"
+                            : "Second e-mail non vérifié"}
+                        </span>
+
+                        {!profile.isSecondaryEmailVerified && (
+                          <button
+                            type="button"
+                            onClick={handleSendSecondaryEmailVerification}
+                            disabled={sendingSecondaryVerification}
+                            style={{
+                              padding: "6px 10px",
+                              borderRadius: "8px",
+                              border: "1px solid #bfdbfe",
+                              background: "#eff6ff",
+                              color: "#1d4ed8",
+                              fontSize: "12px",
+                              fontWeight: 600,
+                              cursor: sendingSecondaryVerification
+                                ? "not-allowed"
+                                : "pointer",
+                              opacity: sendingSecondaryVerification ? 0.7 : 1,
+                            }}
+                          >
+                            {sendingSecondaryVerification
+                              ? "Envoi..."
+                              : "Vérifier le second e-mail"}
+                          </button>
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
+
+                  <div className="form-field full-width">
+                    <label>Mail principal pour les notifications</label>
+                    <div
+                      style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleSetPreferredEmail("PRIMARY")}
+                        disabled={updatingPreferredEmail}
+                        style={{
+                          padding: "7px 12px",
+                          borderRadius: "8px",
+                          border:
+                            profile.preferredEmailType === "PRIMARY"
+                              ? "1px solid #2563eb"
+                              : "1px solid #cbd5e1",
+                          background:
+                            profile.preferredEmailType === "PRIMARY"
+                              ? "#dbeafe"
+                              : "#fff",
+                          color: "#1e293b",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          cursor: updatingPreferredEmail
+                            ? "not-allowed"
+                            : "pointer",
+                        }}
+                      >
+                        E-mail principal actuel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSetPreferredEmail("SECONDARY")}
+                        disabled={
+                          updatingPreferredEmail ||
+                          !profile.secondaryEmail ||
+                          !profile.isSecondaryEmailVerified
+                        }
+                        style={{
+                          padding: "7px 12px",
+                          borderRadius: "8px",
+                          border:
+                            profile.preferredEmailType === "SECONDARY"
+                              ? "1px solid #2563eb"
+                              : "1px solid #cbd5e1",
+                          background:
+                            profile.preferredEmailType === "SECONDARY"
+                              ? "#dbeafe"
+                              : "#fff",
+                          color: "#1e293b",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          cursor:
+                            updatingPreferredEmail ||
+                            !profile.secondaryEmail ||
+                            !profile.isSecondaryEmailVerified
+                              ? "not-allowed"
+                              : "pointer",
+                          opacity:
+                            !profile.secondaryEmail ||
+                            !profile.isSecondaryEmailVerified
+                              ? 0.6
+                              : 1,
+                        }}
+                      >
+                        Deuxième e-mail
+                      </button>
+                    </div>
+                  </div>
+
                   <div className="form-field full-width">
                     <label>Titre professionnel</label>
                     <input

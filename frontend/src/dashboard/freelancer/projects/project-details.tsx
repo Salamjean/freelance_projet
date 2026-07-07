@@ -54,16 +54,16 @@ export const ProjectDetails: React.FC<ProjectDetailsProps> = ({ userId }) => {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const res = await axios.get(`http://192.168.1.18:3000/api/client/projects/public/${projectId}`);
+        const res = await axios.get(`http://localhost:3000/api/client/projects/public/${projectId}`);
         setProject(res.data);
 
         if (userId) {
-          const appsRes = await axios.get(`http://192.168.1.18:3000/api/freelance/${userId}/applications`);
+          const appsRes = await axios.get(`http://localhost:3000/api/freelance/${userId}/applications`);
           const applied = appsRes.data.some((app: any) => app.projectId === Number(projectId));
           setHasApplied(applied);
 
           try {
-            const favsRes = await axios.get(`http://192.168.1.18:3000/api/freelance/${userId}/favorites`);
+            const favsRes = await axios.get(`http://localhost:3000/api/freelance/${userId}/favorites`);
             const isFav = favsRes.data.some((fav: any) => fav.id === Number(projectId));
             setIsFavorite(isFav);
           } catch (e) {
@@ -86,7 +86,7 @@ export const ProjectDetails: React.FC<ProjectDetailsProps> = ({ userId }) => {
     const previous = isFavorite;
     setIsFavorite(!isFavorite);
     try {
-      await axios.post(`http://192.168.1.18:3000/api/freelance/${userId}/favorites/${project.id}`);
+      await axios.post(`http://localhost:3000/api/freelance/${userId}/favorites/${project.id}`);
     } catch (err) {
       setIsFavorite(previous);
       console.error(err);

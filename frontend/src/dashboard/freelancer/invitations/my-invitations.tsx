@@ -34,7 +34,7 @@ export const MyInvitations: React.FC<{ userId: number | null }> = ({ userId }) =
   useEffect(() => {
     const fetchInvitations = async () => {
       try {
-        const res = await axios.get(`http://192.168.1.18:3000/api/freelance/${userId}/invitations`);
+        const res = await axios.get(`http://localhost:3000/api/freelance/${userId}/invitations`);
         setInvitations(res.data);
       } catch (err) {
         console.error("Erreur lors de la récupération des invitations", err);
@@ -64,7 +64,7 @@ export const MyInvitations: React.FC<{ userId: number | null }> = ({ userId }) =
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.put(`http://192.168.1.18:3000/api/freelance/invitations/${id}/status`, { status });
+          await axios.put(`http://localhost:3000/api/freelance/invitations/${id}/status`, { status });
           
           setInvitations(prev => prev.map(inv => inv.id === id ? { ...inv, status } : inv));
           

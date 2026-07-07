@@ -27,7 +27,7 @@ export const AdminHome: React.FC = () => {
     // Simuler un appel API ou utiliser axios s'il est en cours d'exécution
     const fetchStats = async () => {
       try {
-        const response = await axios.get('http://192.168.1.18:3000/api/admin/stats');
+        const response = await axios.get('http://localhost:3000/api/admin/stats');
         setStats(response.data);
       } catch (err) {
         console.log("Le backend n'a pas répondu, utilisation de données simulées.");

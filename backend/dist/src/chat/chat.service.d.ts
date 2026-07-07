@@ -53,15 +53,15 @@ export declare class ChatService {
         };
         replyTo: {
             id: number;
-            fileUrl: string | null;
-            fileName: string | null;
-            content: string | null;
             sender: {
                 profile: {
                     firstName: string | null;
                     lastName: string | null;
                 } | null;
             };
+            fileUrl: string | null;
+            fileName: string | null;
+            content: string | null;
         } | null;
     } & {
         id: number;
@@ -94,15 +94,15 @@ export declare class ChatService {
         };
         replyTo: {
             id: number;
-            fileUrl: string | null;
-            fileName: string | null;
-            content: string | null;
             sender: {
                 profile: {
                     firstName: string | null;
                     lastName: string | null;
                 } | null;
             };
+            fileUrl: string | null;
+            fileName: string | null;
+            content: string | null;
         } | null;
     } & {
         id: number;
@@ -121,9 +121,12 @@ export declare class ChatService {
     updateUserPresence(userId: number, isOnline: boolean, lastSeen?: Date): Promise<{
         id: number;
         email: string;
+        secondaryEmail: string | null;
         password: string;
         role: import("@prisma/client").$Enums.Role;
         isEmailVerified: boolean;
+        isSecondaryEmailVerified: boolean;
+        preferredEmailType: import("@prisma/client").$Enums.PreferredEmailType;
         twoFactorEnabled: boolean;
         createdAt: Date;
         updatedAt: Date;

@@ -72,25 +72,25 @@ export const SearchProjects: React.FC<SearchProjectsProps> = ({ userId }) => {
     const fetchData = async () => {
       try {
         // 1. Charger les projets ouverts
-        const projectsRes = await axios.get('http://192.168.1.18:3000/api/client/projects/public');
+        const projectsRes = await axios.get('http://localhost:3000/api/client/projects/public');
         setProjects(projectsRes.data);
 
         // 2. Charger les catégories
-        const categoriesRes = await axios.get('http://192.168.1.18:3000/api/client/categories');
+        const categoriesRes = await axios.get('http://localhost:3000/api/client/categories');
         setCategories(categoriesRes.data);
 
         // 3. Charger les candidatures du freelance pour marquer celles déjà postulées
         if (userId) {
-          const appsRes = await axios.get(`http://192.168.1.18:3000/api/freelance/${userId}/applications`);
+          const appsRes = await axios.get(`http://localhost:3000/api/freelance/${userId}/applications`);
           const ids = new Set<number>(appsRes.data.map((app: any) => app.projectId));
           setAppliedProjectIds(ids);
 
           // 4. Charger le profil pour récupérer le CV pré-chargé
-          const profileRes = await axios.get(`http://192.168.1.18:3000/api/auth/profile/${userId}`);
+          const profileRes = await axios.get(`http://localhost:3000/api/auth/profile/${userId}`);
           setUserCvUrl(profileRes.data.cvUrl || '');
 
           // 5. Charger les projets favoris
-          const favsRes = await axios.get(`http://192.168.1.18:3000/api/freelance/${userId}/favorites`);
+          const favsRes = await axios.get(`http://localhost:3000/api/freelance/${userId}/favorites`);
           const favIds = new Set<number>(favsRes.data.map((fav: any) => fav.id));
           setFavoriteProjectIds(favIds);
         }
@@ -154,7 +154,7 @@ export const SearchProjects: React.FC<SearchProjectsProps> = ({ userId }) => {
     });
 
     try {
-      await axios.post(`http://192.168.1.18:3000/api/freelance/${userId}/favorites/${projectId}`);
+      await axios.post(`http://localhost:3000/api/freelance/${userId}/favorites/${projectId}`);
     } catch (err) {
       console.error("Erreur toggle favori", err);
       // Revert en cas d'erreur
@@ -199,10 +199,10 @@ export const SearchProjects: React.FC<SearchProjectsProps> = ({ userId }) => {
         const base64Cv = event.target!.result as string;
         try {
           // Charger le profil pour avoir les infos complètes avant PATCH
-          const profileRes = await axios.get(`http://192.168.1.18:3000/api/auth/profile/${userId}`);
+          const profileRes = await axios.get(`http://localhost:3000/api/auth/profile/${userId}`);
           const p = profileRes.data;
 
-          await axios.patch(`http://192.168.1.18:3000/api/auth/profile/${userId}`, {
+          await axios.patch(`http://localhost:3000/api/auth/profile/${userId}`, {
             firstName: p.firstName,
             lastName: p.lastName,
             title: p.title,
@@ -294,7 +294,7 @@ export const SearchProjects: React.FC<SearchProjectsProps> = ({ userId }) => {
 
     setSubmitting(true);
     try {
-      await axios.post(`http://192.168.1.18:3000/api/freelance/${userId}/applications`, {
+      await axios.post(`http://localhost:3000/api/freelance/${userId}/applications`, {
         projectId: selectedProject.id,
         bidAmount: parseFloat(bidAmount),
         deliveryDelay: finalDeliveryDelay,
@@ -410,14 +410,6 @@ export const SearchProjects: React.FC<SearchProjectsProps> = ({ userId }) => {
         <button 
           className={`btn-favorite-filter ${showFavoritesOnly ? 'active' : ''}`}
           onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            padding: '8px 12px', border: '1px solid #d1d5db',
-            borderRadius: '6px', backgroundColor: showFavoritesOnly ? '#fee2e2' : 'white',
-            color: showFavoritesOnly ? '#dc2626' : '#374151',
-            cursor: 'pointer', fontWeight: 500, fontSize: '14px',
-            marginLeft: 'auto'
-          }}
         >
           <Heart size={16} fill={showFavoritesOnly ? '#dc2626' : 'none'} color={showFavoritesOnly ? '#dc2626' : '#6b7280'} />
           Mes favoris
@@ -607,9 +599,19 @@ export const SearchProjects: React.FC<SearchProjectsProps> = ({ userId }) => {
                         onClick={() => {
                           const newWindow = window.open();
                           if (newWindow) {
-                            newWindow.document.write(
-                              `<iframe src="${userCvUrl}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`
-                            );
+                            newWindow.document.body.style.margin = '0';
+                            const iframe = newWindow.document.createElement('iframe');
+                            iframe.src = userCvUrl;
+                            iframe.style.border = '0';
+                            iframe.style.position = 'absolute';
+                            iframe.style.top = '0';
+                            iframe.style.left = '0';
+                            iframe.style.bottom = '0';
+                            iframe.style.right = '0';
+                            iframe.style.width = '100%';
+                            iframe.style.height = '100%';
+                            iframe.allowFullscreen = true;
+                            newWindow.document.body.appendChild(iframe);
                           }
                         }}
                         style={{

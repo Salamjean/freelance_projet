@@ -22,7 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, currentPath, 
   useEffect(() => {
     const fetchStats = () => {
       if (userId) {
-        axios.get(`http://192.168.1.18:3000/api/freelance/${userId}/sidebar-stats`)
+        axios.get(`http://localhost:3000/api/freelance/${userId}/sidebar-stats`)
           .then(res => setStats(res.data))
           .catch(err => console.error("Erreur stats sidebar", err));
       }

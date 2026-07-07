@@ -39,7 +39,7 @@ export const FreelancerLayoutWrapper: React.FC<FreelancerLayoutWrapperProps> = (
     if (!userId) return;
     const fetchVerificationStatus = async () => {
       try {
-        const res = await axios.get(`http://192.168.1.18:3000/api/auth/profile/${userId}`);
+        const res = await axios.get(`http://localhost:3000/api/auth/profile/${userId}`);
         setIsVerified(res.data.idVerificationStatus === 'APPROVED');
         setAvatarUrl(res.data.avatarUrl || null);
       } catch (err) {
@@ -49,7 +49,7 @@ export const FreelancerLayoutWrapper: React.FC<FreelancerLayoutWrapperProps> = (
     
     const fetchWallet = async () => {
       try {
-        const res = await axios.get(`http://192.168.1.18:3000/api/freelance/${userId}/wallet`);
+        const res = await axios.get(`http://localhost:3000/api/freelance/${userId}/wallet`);
         if (setBalance && res.data && res.data.balance !== undefined) {
           setBalance(Number(res.data.balance));
           localStorage.setItem('userBalance', res.data.balance.toString());

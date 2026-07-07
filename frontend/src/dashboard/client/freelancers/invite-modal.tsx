@@ -20,7 +20,7 @@ export const InviteModal: React.FC<InviteModalProps> = ({ userId, freelancer, on
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await axios.get(`http://192.168.1.18:3000/api/client/${userId}/dashboard`);
+        const res = await axios.get(`http://localhost:3000/api/client/${userId}/dashboard`);
         // Garder uniquement les projets OPEN
         const openProjects = (res.data.projects || []).filter((p: any) => p.status === 'OPEN');
         setProjects(openProjects);
@@ -49,7 +49,7 @@ export const InviteModal: React.FC<InviteModalProps> = ({ userId, freelancer, on
 
     setSubmitting(true);
     try {
-      await axios.post(`http://192.168.1.18:3000/api/client/${userId}/projects/${selectedProjectId}/invite/${freelancer.id}`, {
+      await axios.post(`http://localhost:3000/api/client/${userId}/projects/${selectedProjectId}/invite/${freelancer.id}`, {
         message
       });
       Swal.fire({

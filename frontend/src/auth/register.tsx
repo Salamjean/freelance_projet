@@ -67,14 +67,14 @@ export const Register: React.FC<RegisterProps> = ({
         lastName,
       };
 
-      await axios.post('http://192.168.1.18:3000/api/auth/register', payload);
+      await axios.post('http://localhost:3000/api/auth/register', payload);
 
       // Effectuer une auto-connexion pour récupérer les tokens réels
       let token: string | undefined;
       let refresh: string | undefined;
       let userId = 0;
       try {
-        const loginRes = await axios.post('http://192.168.1.18:3000/api/auth/login', { email, password });
+        const loginRes = await axios.post('http://localhost:3000/api/auth/login', { email, password });
         token = loginRes.data.accessToken;
         refresh = loginRes.data.refreshToken;
         userId = loginRes.data.user?.id || 0;

@@ -147,7 +147,7 @@ export const SearchFreelancers: React.FC<SearchFreelancersProps> = ({ userId }) 
   useEffect(() => {
     const fetchFreelancers = async () => {
       try {
-        const response = await axios.get('http://192.168.1.18:3000/api/freelance/public');
+        const response = await axios.get('http://localhost:3000/api/freelance/public');
         setFreelancers(response.data);
       } catch (err) {
         console.warn('Impossible de récupérer les freelances, utilisation de données simulées.');

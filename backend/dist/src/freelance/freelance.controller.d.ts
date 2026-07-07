@@ -187,9 +187,12 @@ export declare class FreelanceController {
             } & {
                 id: number;
                 email: string;
+                secondaryEmail: string | null;
                 password: string;
                 role: import("@prisma/client").$Enums.Role;
                 isEmailVerified: boolean;
+                isSecondaryEmailVerified: boolean;
+                preferredEmailType: import("@prisma/client").$Enums.PreferredEmailType;
                 twoFactorEnabled: boolean;
                 createdAt: Date;
                 updatedAt: Date;
@@ -284,9 +287,12 @@ export declare class FreelanceController {
         } & {
             id: number;
             email: string;
+            secondaryEmail: string | null;
             password: string;
             role: import("@prisma/client").$Enums.Role;
             isEmailVerified: boolean;
+            isSecondaryEmailVerified: boolean;
+            preferredEmailType: import("@prisma/client").$Enums.PreferredEmailType;
             twoFactorEnabled: boolean;
             createdAt: Date;
             updatedAt: Date;
@@ -383,9 +389,12 @@ export declare class FreelanceController {
         } & {
             id: number;
             email: string;
+            secondaryEmail: string | null;
             password: string;
             role: import("@prisma/client").$Enums.Role;
             isEmailVerified: boolean;
+            isSecondaryEmailVerified: boolean;
+            preferredEmailType: import("@prisma/client").$Enums.PreferredEmailType;
             twoFactorEnabled: boolean;
             createdAt: Date;
             updatedAt: Date;
@@ -559,9 +568,12 @@ export declare class FreelanceController {
         client: {
             id: number;
             email: string;
+            secondaryEmail: string | null;
             password: string;
             role: import("@prisma/client").$Enums.Role;
             isEmailVerified: boolean;
+            isSecondaryEmailVerified: boolean;
+            preferredEmailType: import("@prisma/client").$Enums.PreferredEmailType;
             twoFactorEnabled: boolean;
             createdAt: Date;
             updatedAt: Date;

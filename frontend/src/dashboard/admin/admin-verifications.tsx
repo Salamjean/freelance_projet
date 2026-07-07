@@ -25,7 +25,7 @@ export const AdminVerifications: React.FC = () => {
 
   const fetchVerifications = async () => {
     try {
-      const res = await axios.get('http://192.168.1.18:3000/api/admin/verifications');
+      const res = await axios.get('http://localhost:3000/api/admin/verifications');
       setVerifications(res.data);
     } catch {
       // Données de secours si le serveur ne répond pas
@@ -54,7 +54,7 @@ export const AdminVerifications: React.FC = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-      await axios.post(`http://192.168.1.18:3000/api/admin/verifications/${profileId}/approve`);
+      await axios.post(`http://localhost:3000/api/admin/verifications/${profileId}/approve`);
       Swal.fire({
         title: 'Certifié !',
         text: 'Le profil du freelance a été certifié avec succès.',
@@ -97,7 +97,7 @@ export const AdminVerifications: React.FC = () => {
     if (!reason) return;
 
     try {
-      await axios.post(`http://192.168.1.18:3000/api/admin/verifications/${profileId}/reject`, {
+      await axios.post(`http://localhost:3000/api/admin/verifications/${profileId}/reject`, {
         rejectionReason: reason,
       });
       Swal.fire({

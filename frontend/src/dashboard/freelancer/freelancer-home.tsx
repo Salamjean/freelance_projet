@@ -95,7 +95,7 @@ export const FreelancerHome: React.FC<FreelancerHomeProps> = ({ userId, onNaviga
     if (!result.isConfirmed) return;
 
     try {
-      await axios.put(`http://192.168.1.18:3000/api/freelance/${userId}/missions/${missionId}/status`, { status });
+      await axios.put(`http://localhost:3000/api/freelance/${userId}/missions/${missionId}/status`, { status });
       setStats((prev) => ({
         ...prev,
         activeMissions: prev.activeMissions.map((m) => (m.id === missionId ? { ...m, status } : m))
@@ -114,7 +114,7 @@ export const FreelancerHome: React.FC<FreelancerHomeProps> = ({ userId, onNaviga
     }
     const fetchStatsAndProfile = async () => {
       try {
-        const response = await axios.get(`http://192.168.1.18:3000/api/freelance/${userId}/dashboard`);
+        const response = await axios.get(`http://localhost:3000/api/freelance/${userId}/dashboard`);
         setStats(response.data);
       } catch (err) {
         console.log("Le backend n'a pas répondu, utilisation de données simulées.");
@@ -130,7 +130,7 @@ export const FreelancerHome: React.FC<FreelancerHomeProps> = ({ userId, onNaviga
       }
 
       try {
-        const profileRes = await axios.get(`http://192.168.1.18:3000/api/auth/profile/${userId}`);
+        const profileRes = await axios.get(`http://localhost:3000/api/auth/profile/${userId}`);
         const p = profileRes.data;
         const skillsMapped = (p.skills || []).map((s: any) => ({
           skillId: s.skillId || s.skill?.id || 0,

@@ -41,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     if (!userId) return;
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get(`http://192.168.1.18:3000/api/auth/profile/${userId}/notifications`);
+        const res = await axios.get(`http://localhost:3000/api/auth/profile/${userId}/notifications`);
         setNotifications(res.data);
       } catch (err) {
         console.error('Error fetching notifications', err);
@@ -55,7 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const handleNotificationClick = async (notif: NotificationItem) => {
     if (!notif.isRead) {
       try {
-        await axios.put(`http://192.168.1.18:3000/api/auth/notifications/${notif.id}/read`);
+        await axios.put(`http://localhost:3000/api/auth/notifications/${notif.id}/read`);
         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isRead: true } : n));
       } catch (err) {
         console.error('Error marking as read', err);

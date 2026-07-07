@@ -16,7 +16,7 @@ async function bootstrap() {
 
   // Activer CORS pour permettre la communication avec le frontend
   app.enableCors({
-    origin: '*', // En production, spécifiez l'URL de votre frontend
+    origin: true, // En production, spécifiez l'URL de votre frontend
     credentials: true,
   });
 
@@ -46,5 +46,3 @@ async function bootstrap() {
   console.log(`📄 La documentation API (Swagger) est disponible sur : http://localhost:${port}/api-docs`);
 }
 bootstrap();
-// reload-trigger-8
-

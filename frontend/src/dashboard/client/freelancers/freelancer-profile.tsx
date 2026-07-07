@@ -254,9 +254,19 @@ export const FreelancerProfile: React.FC<FreelancerProfileProps> = ({ freelancer
                     if (!cv) return;
                     const newWindow = window.open();
                     if (newWindow) {
-                      newWindow.document.write(
-                        `<iframe src="${cv}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`
-                      );
+                      newWindow.document.body.style.margin = '0';
+                      const iframe = newWindow.document.createElement('iframe');
+                      iframe.src = cv;
+                      iframe.style.border = '0';
+                      iframe.style.position = 'absolute';
+                      iframe.style.top = '0px';
+                      iframe.style.left = '0px';
+                      iframe.style.bottom = '0px';
+                      iframe.style.right = '0px';
+                      iframe.style.width = '100%';
+                      iframe.style.height = '100%';
+                      iframe.allowFullscreen = true;
+                      newWindow.document.body.appendChild(iframe);
                     }
                   }}
                   style={{

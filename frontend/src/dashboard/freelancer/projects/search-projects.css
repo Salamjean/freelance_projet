@@ -83,11 +83,37 @@
   border: 1px solid var(--border-color);
 }
 
+.btn-favorite-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: white;
+  color: #374151;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.btn-favorite-filter:hover {
+  background-color: #f3f4f6;
+}
+
+.btn-favorite-filter.active {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
 /* Grille de cartes */
-.projects-grid {
+.search-projects-page .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
   gap: 20px;
+  margin-top: 0;
 }
 
 /* Carte de projet */
@@ -582,6 +608,10 @@
   .projects-count-badge {
     margin-left: 0;
     text-align: center;
+  }
+
+  .btn-favorite-filter {
+    justify-content: center;
   }
 
   .form-fields-row {

@@ -31,7 +31,7 @@ export const ProjectApplications: React.FC<ProjectApplicationsProps> = ({ projec
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const res = await axios.get(`http://192.168.1.18:3000/api/client/projects/${project.id}/applications`);
+        const res = await axios.get(`http://localhost:3000/api/client/projects/${project.id}/applications`);
         setApplications(res.data);
       } catch (err) {
         console.error("Erreur lors du chargement des candidatures", err);
@@ -56,7 +56,7 @@ export const ProjectApplications: React.FC<ProjectApplicationsProps> = ({ projec
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            await axios.put(`http://192.168.1.18:3000/api/client/applications/${appId}/status`, { status });
+            await axios.put(`http://localhost:3000/api/client/applications/${appId}/status`, { status });
             
             setApplications(prev => prev.map(app => 
               app.id === appId ? { ...app, status } : app
@@ -91,7 +91,7 @@ export const ProjectApplications: React.FC<ProjectApplicationsProps> = ({ projec
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.put(`http://192.168.1.18:3000/api/client/applications/${appId}/status`, { status });
+          await axios.put(`http://localhost:3000/api/client/applications/${appId}/status`, { status });
           
           setApplications(prev => prev.map(app => 
             app.id === appId ? { ...app, status } : app
@@ -243,9 +243,8 @@ export const ProjectApplications: React.FC<ProjectApplicationsProps> = ({ projec
                           className="btn btn-secondary btn-sm"
                           style={{ padding: '4px 8px', fontSize: '12px' }}
                           onClick={() => {
-                            const win = window.open();
-                            if (win) {
-                              win.document.write(`<iframe src="${app.freelancer.profile?.cvUrl}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+                            if (app.freelancer.profile?.cvUrl) {
+                              window.open(app.freelancer.profile.cvUrl, '_blank', 'noopener,noreferrer');
                             }
                           }}
                         >

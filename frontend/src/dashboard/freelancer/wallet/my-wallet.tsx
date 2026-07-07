@@ -31,7 +31,7 @@ export const MyWallet: React.FC<MyWalletProps> = ({ userId }) => {
     const fetchWallet = async () => {
       try {
         if (!userId) return;
-        const res = await axios.get(`http://192.168.1.18:3000/api/freelance/${userId}/wallet`);
+        const res = await axios.get(`http://localhost:3000/api/freelance/${userId}/wallet`);
         setWallet(res.data);
       } catch (err) {
         console.error('Erreur lors de la récupération du portefeuille', err);

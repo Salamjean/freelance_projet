@@ -105,7 +105,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ userId, userRole }
 
   // Initialize socket
   useEffect(() => {
-    const newSocket = io('http://192.168.1.18:3000', {
+    const newSocket = io('http://localhost:3000', {
       query: { userId: userId.toString() }
     });
 
@@ -126,7 +126,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ userId, userRole }
     const fetchConversations = async () => {
       try {
         const token = localStorage.getItem('accessToken');
-        const res = await axios.get('http://192.168.1.18:3000/api/chat/conversations', {
+        const res = await axios.get('http://localhost:3000/api/chat/conversations', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setConversations(res.data);
@@ -146,7 +146,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ userId, userRole }
       const fetchMessages = async () => {
         try {
           const token = localStorage.getItem('accessToken');
-          const res = await axios.get(`http://192.168.1.18:3000/api/chat/conversations/${activeConversationId}/messages`, {
+          const res = await axios.get(`http://localhost:3000/api/chat/conversations/${activeConversationId}/messages`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setMessages(res.data);
@@ -155,7 +155,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ userId, userRole }
           setInitialUnreadMessageId(unreadMsg ? unreadMsg.id : null);
           
           // Mark as read
-          await axios.put(`http://192.168.1.18:3000/api/chat/conversations/${activeConversationId}/read`, {}, {
+          await axios.put(`http://localhost:3000/api/chat/conversations/${activeConversationId}/read`, {}, {
             headers: { Authorization: `Bearer ${token}` }
           });
           if (socket) {
@@ -185,7 +185,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ userId, userRole }
           // Immediate mark as read if conversation is open
           if (Number(message.senderId) !== Number(userId)) {
              const token = localStorage.getItem('accessToken');
-             axios.put(`http://192.168.1.18:3000/api/chat/conversations/${activeConversationId}/read`, {}, {
+             axios.put(`http://localhost:3000/api/chat/conversations/${activeConversationId}/read`, {}, {
                headers: { Authorization: `Bearer ${token}` }
              }).then(() => {
                socket.emit('messagesRead', { conversationId: activeConversationId, readerId: userId });
@@ -295,7 +295,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ userId, userRole }
         const formData = new FormData();
         formData.append('file', selectedFile);
         const token = localStorage.getItem('accessToken');
-        const res = await axios.post('http://192.168.1.18:3000/api/chat/upload', formData, {
+        const res = await axios.post('http://localhost:3000/api/chat/upload', formData, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',
@@ -547,18 +547,18 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ userId, userRole }
                           <div className="message-attachment">
                             {msg.fileType?.startsWith('image/') ? (
                               <img 
-                                src={`http://192.168.1.18:3000${msg.fileUrl}`} 
+                                src={`http://localhost:3000${msg.fileUrl}`} 
                                 alt={msg.fileName} 
                                 className="chat-image-attachment" 
-                                onClick={() => setEnlargedImage(`http://192.168.1.18:3000${msg.fileUrl}`)}
+                                onClick={() => setEnlargedImage(`http://localhost:3000${msg.fileUrl}`)}
                                 style={{ cursor: 'pointer', transition: 'transform 0.2s' }}
                                 onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
                                 onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                               />
                             ) : msg.fileType?.startsWith('video/') ? (
-                              <video src={`http://192.168.1.18:3000${msg.fileUrl}`} controls className="chat-video-attachment" />
+                              <video src={`http://localhost:3000${msg.fileUrl}`} controls className="chat-video-attachment" />
                             ) : (
-                              <a href={`http://192.168.1.18:3000${msg.fileUrl}`} target="_blank" rel="noopener noreferrer" className="chat-file-attachment">
+                              <a href={`http://localhost:3000${msg.fileUrl}`} target="_blank" rel="noopener noreferrer" className="chat-file-attachment">
                                 <Paperclip size={16} /> {msg.fileName}
                               </a>
                             )}

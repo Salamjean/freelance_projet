@@ -1,19 +1,32 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import axios from 'axios';
-import Swal from 'sweetalert2';
+import React, { useState } from "react";
+import { ArrowLeft, Eye, EyeOff, Mail, Lock } from "lucide-react";
+import axios from "axios";
+import Swal from "sweetalert2";
 
-type Role = 'ADMIN' | 'CLIENT' | 'FREELANCER';
+type Role = "ADMIN" | "CLIENT" | "FREELANCER";
 
 interface LoginProps {
   onBack: () => void;
   onGoToRegister: () => void;
-  onLoginSuccess: (userId: number, userName: string, role: Role, balance: number, token?: string, refresh?: string) => void;
+  onForgotPassword: () => void;
+  onLoginSuccess: (
+    userId: number,
+    userName: string,
+    role: Role,
+    balance: number,
+    token?: string,
+    refresh?: string,
+  ) => void;
 }
 
-export const Login: React.FC<LoginProps> = ({ onBack, onGoToRegister, onLoginSuccess }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export const Login: React.FC<LoginProps> = ({
+  onBack,
+  onGoToRegister,
+  onForgotPassword,
+  onLoginSuccess,
+}) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,26 +39,39 @@ export const Login: React.FC<LoginProps> = ({ onBack, onGoToRegister, onLoginSuc
     }
 
     try {
-      const response = await axios.post('http://192.168.1.18:3000/api/auth/login', { email, password });
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        { email, password },
+      );
       const { user, accessToken, refreshToken } = response.data;
-      
+
       Swal.fire({
-        title: 'Connexion réussie !',
-        text: 'Redirection vers votre espace...',
-        icon: 'success',
+        title: "Connexion réussie !",
+        text: "Redirection vers votre espace...",
+        icon: "success",
         timer: 1500,
         showConfirmButton: false,
         timerProgressBar: true,
         heightAuto: false,
       }).then(() => {
-        const displayName = user.profile?.firstName && user.profile?.lastName
-          ? `${user.profile.firstName} ${user.profile.lastName}`
-          : user.email.split('@')[0];
-        onLoginSuccess(user.id, displayName, user.role, user.balance || 0, accessToken, refreshToken);
+        const displayName =
+          user.profile?.firstName && user.profile?.lastName
+            ? `${user.profile.firstName} ${user.profile.lastName}`
+            : user.email.split("@")[0];
+        onLoginSuccess(
+          user.id,
+          displayName,
+          user.role,
+          user.balance || 0,
+          accessToken,
+          refreshToken,
+        );
       });
     } catch (err: any) {
       console.error("Échec connexion API :", err);
-      const message = err.response?.data?.message || "Identifiants incorrects ou serveur indisponible.";
+      const message =
+        err.response?.data?.message ||
+        "Identifiants incorrects ou serveur indisponible.";
       setError(message);
     }
   };
@@ -63,11 +89,7 @@ export const Login: React.FC<LoginProps> = ({ onBack, onGoToRegister, onLoginSuc
         </div>
 
         <form onSubmit={handleLogin} className="auth-form">
-          {error && (
-            <div className="auth-error-message">
-              {error}
-            </div>
-          )}
+          {error && <div className="auth-error-message">{error}</div>}
 
           <div className="form-group">
             <label className="form-label">Adresse E-mail</label>
@@ -89,7 +111,7 @@ export const Login: React.FC<LoginProps> = ({ onBack, onGoToRegister, onLoginSuc
             <div className="password-input-wrapper input-with-icon">
               <Lock className="input-icon" size={18} />
               <input
-                type={showLoginPassword ? 'text' : 'password'}
+                type={showLoginPassword ? "text" : "password"}
                 className="form-control"
                 placeholder="Saisissez votre mot de passe"
                 value={password}
@@ -107,13 +129,23 @@ export const Login: React.FC<LoginProps> = ({ onBack, onGoToRegister, onLoginSuc
             </div>
           </div>
 
+          <div className="forgot-password-row">
+            <button
+              type="button"
+              className="link-btn"
+              onClick={onForgotPassword}
+            >
+              Mot de passe oublié ?
+            </button>
+          </div>
+
           <button type="submit" className="btn btn-primary btn-block">
             Connexion
           </button>
         </form>
 
         <p className="auth-footer-text">
-          Nouveau sur la plateforme ?{' '}
+          Nouveau sur la plateforme ?{" "}
           <button className="link-btn" onClick={onGoToRegister}>
             S'inscrire
           </button>

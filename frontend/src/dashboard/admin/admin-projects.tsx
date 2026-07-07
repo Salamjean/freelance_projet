@@ -37,7 +37,7 @@ export const AdminProjects: React.FC = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get('http://192.168.1.18:3000/api/admin/projects');
+        const response = await axios.get('http://localhost:3000/api/admin/projects');
         setProjects(response.data);
       } catch (err) {
         console.error("Erreur lors de la récupération des projets:", err);

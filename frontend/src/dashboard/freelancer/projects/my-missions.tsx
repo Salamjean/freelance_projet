@@ -75,7 +75,7 @@ export const MyMissions: React.FC<MyMissionsProps> = ({ userId }) => {
     const fetchMissions = async () => {
       try {
         const res = await axios.get(
-          `http://192.168.1.18:3000/api/freelance/${userId}/missions`,
+          `http://localhost:3000/api/freelance/${userId}/missions`,
         );
         const activeMissions = res.data.filter(
           (m: Mission) => m.status !== "VALIDATED" && m.status !== "COMPLETED",
@@ -118,7 +118,7 @@ export const MyMissions: React.FC<MyMissionsProps> = ({ userId }) => {
 
     try {
       const res = await axios.put(
-        `http://192.168.1.18:3000/api/freelance/${userId}/missions/${missionId}/status`,
+        `http://localhost:3000/api/freelance/${userId}/missions/${missionId}/status`,
         { status },
       );
       setMissions((prev) =>
@@ -149,7 +149,7 @@ export const MyMissions: React.FC<MyMissionsProps> = ({ userId }) => {
   const claimAdvance = async (missionId: number) => {
     try {
       const res = await axios.put(
-        `http://192.168.1.18:3000/api/freelance/${userId}/missions/${missionId}/advance/claim`,
+        `http://localhost:3000/api/freelance/${userId}/missions/${missionId}/advance/claim`,
       );
       setMissions((prev) =>
         prev.map((m) =>
@@ -176,7 +176,7 @@ export const MyMissions: React.FC<MyMissionsProps> = ({ userId }) => {
     try {
       const token = localStorage.getItem("accessToken");
       await axios.post(
-        "http://192.168.1.18:3000/api/chat/initiate",
+        "http://localhost:3000/api/chat/initiate",
         { targetUserId: clientId },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -344,10 +344,6 @@ export const MyMissions: React.FC<MyMissionsProps> = ({ userId }) => {
             <Sparkles size={14} /> Tableau freelance
           </p>
           <h1>Mes missions</h1>
-          <p className="missions-subtitle">
-            Refonte des cartes avec une vue claire, actionnable et searchable de
-            vos contrats actifs.
-          </p>
         </div>
 
         <div className="missions-kpis">

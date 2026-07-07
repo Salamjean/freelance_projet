@@ -25,7 +25,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   useEffect(() => {
     const userId = localStorage.getItem('userId');
     if (userId) {
-      axios.get(`http://192.168.1.18:3000/api/auth/profile/${userId}/notifications`)
+      axios.get(`http://localhost:3000/api/auth/profile/${userId}/notifications`)
         .then(res => {
           setNotifications(res.data);
         })
@@ -38,7 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const handleNotificationClick = async (notif: any) => {
     if (!notif.isRead) {
       try {
-        await axios.put(`http://192.168.1.18:3000/api/auth/notifications/${notif.id}/read`);
+        await axios.put(`http://localhost:3000/api/auth/notifications/${notif.id}/read`);
         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isRead: true } : n));
       } catch (err) {
         console.error("Erreur lors de la mise à jour de la notification", err);

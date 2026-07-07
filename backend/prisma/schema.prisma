@@ -101,12 +101,20 @@ enum SubscriptionStatus {
   EXPIRED
 }
 
+enum PreferredEmailType {
+  PRIMARY
+  SECONDARY
+}
+
 model User {
   id                Int             @id @default(autoincrement())
   email             String          @unique
+  secondaryEmail    String?         @unique
   password          String
   role              Role            @default(CLIENT)
   isEmailVerified   Boolean         @default(false)
+  isSecondaryEmailVerified Boolean   @default(false)
+  preferredEmailType PreferredEmailType @default(PRIMARY)
   twoFactorEnabled  Boolean         @default(false)
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt

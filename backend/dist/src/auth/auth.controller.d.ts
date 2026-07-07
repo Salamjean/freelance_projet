@@ -1,12 +1,21 @@
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
+import { SecondaryEmailDto } from './dto/secondary-email.dto';
+import { PreferredEmailDto } from './dto/preferred-email.dto';
 import type { Request } from 'express';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
     getProfile(userId: number): Promise<{
         email: string;
+        isEmailVerified: boolean;
+        secondaryEmail: string | null;
+        isSecondaryEmailVerified: boolean;
+        preferredEmailType: import("@prisma/client").$Enums.PreferredEmailType;
         firstName: string;
         lastName: string;
         title: string;
@@ -264,6 +273,33 @@ export declare class AuthController {
             } | null;
             balance: number;
         };
+    }>;
+    forgotPassword(dto: ForgotPasswordDto): Promise<{
+        message: string;
+    }>;
+    resetPassword(dto: ResetPasswordDto): Promise<{
+        message: string;
+    }>;
+    sendEmailVerification(userId: number): Promise<{
+        message: string;
+    }>;
+    setSecondaryEmail(userId: number, dto: SecondaryEmailDto): Promise<{
+        message: string;
+        secondaryEmail: string;
+        isSecondaryEmailVerified: boolean;
+    }>;
+    sendSecondaryEmailVerification(userId: number): Promise<{
+        message: string;
+    }>;
+    setPreferredEmail(userId: number, dto: PreferredEmailDto): Promise<{
+        message: string;
+        preferredEmailType: import("./dto/preferred-email.dto").PreferredEmailOption;
+    }>;
+    verifyEmail(dto: VerifyEmailDto): Promise<{
+        message: string;
+    }>;
+    verifySecondaryEmail(dto: VerifyEmailDto): Promise<{
+        message: string;
     }>;
     refresh(refreshToken: string, req: Request, userAgent?: string): Promise<{
         accessToken: string;

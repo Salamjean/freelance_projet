@@ -43,7 +43,7 @@ export const PublishProject: React.FC<PublishProjectProps> = ({ userId, onProjec
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://192.168.1.18:3000/api/client/categories');
+        const response = await axios.get('http://localhost:3000/api/client/categories');
         setCategories(response.data);
       } catch (err) {
         console.warn("Impossible de charger les catégories depuis l'API, utilisation de données simulées.");
@@ -114,7 +114,7 @@ export const PublishProject: React.FC<PublishProjectProps> = ({ userId, onProjec
 
       if (projectToEdit) {
         // Mode modification
-        await axios.put(`http://192.168.1.18:3000/api/client/projects/${projectToEdit.id}`, payload);
+        await axios.put(`http://localhost:3000/api/client/projects/${projectToEdit.id}`, payload);
         
         Swal.fire({
           title: 'Projet mis à jour !',
@@ -129,7 +129,7 @@ export const PublishProject: React.FC<PublishProjectProps> = ({ userId, onProjec
         });
       } else {
         // Mode création
-        await axios.post(`http://192.168.1.18:3000/api/client/${userId || 1}/projects`, payload);
+        await axios.post(`http://localhost:3000/api/client/${userId || 1}/projects`, payload);
 
         Swal.fire({
           title: 'Projet publié avec succès !',

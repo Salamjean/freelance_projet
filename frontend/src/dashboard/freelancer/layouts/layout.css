@@ -150,7 +150,18 @@
   background: none;
   border: none;
   color: var(--text-main);
-  display: none;
+  display: none; /* overrides in media query */
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: var(--border-radius-sm);
+  transition: background-color 0.2s;
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: var(--background-color);
+  color: var(--primary-color);
 }
 
 .navbar-title {
@@ -335,7 +346,7 @@
   }
   
   .sidebar-toggle-btn {
-    display: block;
+    display: flex;
   }
   
   .dashboard-navbar {
@@ -344,5 +355,11 @@
   
   .dashboard-page-body {
     padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-title {
+    display: none;
   }
 }

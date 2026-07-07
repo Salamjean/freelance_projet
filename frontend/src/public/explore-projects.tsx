@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Search, Filter, BookOpen, Briefcase } from 'lucide-react';
 import './explore-projects.css';
@@ -29,8 +30,9 @@ export const ExploreProjects: React.FC<ExploreProjectsProps> = ({
   onGoToLogin,
   onGoToRegister,
 }) => {
+  const location = useLocation();
   const [projects, setProjects] = useState<Project[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(location.state?.category || '');
   const [experienceFilter, setExperienceFilter] = useState('ALL');
   const [budgetTypeFilter, setBudgetTypeFilter] = useState('ALL');
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ export const ExploreProjects: React.FC<ExploreProjectsProps> = ({
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get('http://192.168.1.18:3000/api/client/projects/public');
+        const response = await axios.get('http://localhost:3000/api/client/projects/public');
         setProjects(response.data);
       } catch (err) {
         console.warn("Impossible de récupérer la liste des projets, utilisation de données simulées.");
@@ -58,8 +60,10 @@ export const ExploreProjects: React.FC<ExploreProjectsProps> = ({
 
   // Filtrer les projets
   const filteredProjects = projects.filter((project) => {
-    const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          project.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const searchLower = searchTerm.toLowerCase();
+    const matchesSearch = project.title.toLowerCase().includes(searchLower) || 
+                          project.description.toLowerCase().includes(searchLower) ||
+                          (project.category && project.category.name.toLowerCase().includes(searchLower));
     const matchesExp = experienceFilter === 'ALL' || project.experienceLevel === experienceFilter;
     const matchesBudget = budgetTypeFilter === 'ALL' || project.budgetType === budgetTypeFilter;
     return matchesSearch && matchesExp && matchesBudget;
@@ -87,16 +91,19 @@ export const ExploreProjects: React.FC<ExploreProjectsProps> = ({
             Accueil
           </button>
           <button className="nav-tab active" onClick={() => {}}>
-            Explorer les projets
+            Missions
           </button>
         </div>
 
         <div className="landing-nav-actions">
-          <button className="btn btn-secondary" onClick={onGoToLogin}>
-            Se Connecter
+          <button className="btn link-btn hide-on-mobile" onClick={onGoToLogin}>
+            Connexion
           </button>
-          <button className="btn btn-primary" onClick={onGoToRegister}>
+          <button className="btn btn-primary btn-rounded hide-on-mobile" onClick={onGoToRegister}>
             S'inscrire
+          </button>
+          <button className="btn btn-primary btn-rounded show-on-mobile" onClick={onGoToLogin}>
+            Se connecter
           </button>
         </div>
       </nav>

@@ -35,8 +35,13 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log('🌱 Démarrage du peuplement (seeding) de la base de données...');
 
-  const adminEmail = 'admin@gmail.com';
-  const adminPassword = 'azertyui';
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@gmail.com';
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  
+  if (!adminPassword) {
+    throw new Error("⚠️ ADMIN_PASSWORD n'est pas défini. Veuillez l'ajouter dans votre fichier .env (ex: ADMIN_PASSWORD=mon_mot_de_passe_securise)");
+  }
+
   const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
   // 1. Création de l'administrateur

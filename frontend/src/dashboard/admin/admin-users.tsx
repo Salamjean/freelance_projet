@@ -26,7 +26,7 @@ export const AdminUsers: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://192.168.1.18:3000/api/admin/users');
+      const response = await axios.get('http://localhost:3000/api/admin/users');
       setUsers(response.data);
     } catch (err) {
       console.error("Erreur lors de la récupération des utilisateurs:", err);
@@ -75,7 +75,7 @@ export const AdminUsers: React.FC = () => {
       if (result.isConfirmed && result.value) {
         try {
           const adminId = parseInt(localStorage.getItem('userId') || '0', 10);
-          await axios.post(`http://192.168.1.18:3000/api/admin/users/${user.id}/message`, {
+          await axios.post(`http://localhost:3000/api/admin/users/${user.id}/message`, {
             adminId,
             content: result.value
           });
@@ -103,7 +103,7 @@ export const AdminUsers: React.FC = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            await axios.post(`http://192.168.1.18:3000/api/admin/users/${user.id}/unsuspend`);
+            await axios.post(`http://localhost:3000/api/admin/users/${user.id}/unsuspend`);
             Swal.fire('Débloqué', "L'utilisateur a été débloqué avec succès.", 'success');
             fetchUsers();
           } catch (err) {
@@ -139,7 +139,7 @@ export const AdminUsers: React.FC = () => {
         if (result.isConfirmed && result.value) {
           const duration = result.value === 'permanent' ? null : parseInt(result.value, 10);
           try {
-            await axios.post(`http://192.168.1.18:3000/api/admin/users/${user.id}/suspend`, {
+            await axios.post(`http://localhost:3000/api/admin/users/${user.id}/suspend`, {
               durationInDays: duration
             });
             Swal.fire('Suspendu', "L'utilisateur a été suspendu avec succès.", 'success');
