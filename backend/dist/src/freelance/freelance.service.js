@@ -257,7 +257,7 @@ let FreelanceService = class FreelanceService {
                 project: {
                     include: {
                         category: true,
-                        subCategory: true
+                        subCategories: true
                     }
                 },
                 client: {
@@ -421,7 +421,7 @@ let FreelanceService = class FreelanceService {
                 project: {
                     include: {
                         category: true,
-                        subCategory: true
+                        subCategories: true
                     }
                 },
                 client: {

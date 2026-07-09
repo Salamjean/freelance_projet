@@ -26,7 +26,7 @@ interface Project {
   duration?: string;
   createdAt: string;
   category: Category;
-  subCategory: SubCategory;
+  subCategories: SubCategory[];
   clientId: number;
   client?: {
     email: string;
@@ -118,14 +118,14 @@ export const SearchProjects: React.FC<SearchProjectsProps> = ({ userId }) => {
     const title = p.title.toLowerCase();
     const desc = p.description.toLowerCase();
     const categoryName = p.category?.name.toLowerCase() || '';
-    const subCategoryName = p.subCategory?.name.toLowerCase() || '';
+    const subCategoriesNames = p.subCategories?.map(s => s.name.toLowerCase()).join(' ') || '';
     
     const matchSearch = 
       searchTerm === '' ||
       title.includes(searchTerm.toLowerCase()) ||
       desc.includes(searchTerm.toLowerCase()) ||
       categoryName.includes(searchTerm.toLowerCase()) ||
-      subCategoryName.includes(searchTerm.toLowerCase());
+      subCategoriesNames.includes(searchTerm.toLowerCase());
       
     const matchCategory = categoryFilter === 'ALL' || p.category?.id.toString() === categoryFilter;
     const matchLevel = levelFilter === 'ALL' || p.experienceLevel === levelFilter;
@@ -439,9 +439,9 @@ export const SearchProjects: React.FC<SearchProjectsProps> = ({ userId }) => {
                   <div style={{ flex: 1 }}>
                     <div className="project-category-row">
                       <span className="project-cat-badge">{project.category?.name}</span>
-                      {project.subCategory && (
-                        <span className="project-subcat-badge">{project.subCategory.name}</span>
-                      )}
+                      {project.subCategories && project.subCategories.map(sub => (
+                        <span key={sub.id} className="project-subcat-badge">{sub.name}</span>
+                      ))}
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <h3 className="project-card-title">{project.title}</h3>

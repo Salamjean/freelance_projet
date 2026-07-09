@@ -155,7 +155,6 @@ export declare class AdminController {
         status: import("@prisma/client").$Enums.ProjectStatus;
         clientId: number;
         categoryId: number;
-        subCategoryId: number;
         budget: import("@prisma/client-runtime-utils").Decimal;
         budgetType: import("@prisma/client").$Enums.BudgetType;
         duration: string | null;

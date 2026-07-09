@@ -286,7 +286,7 @@ export class FreelanceService {
         project: {
           include: {
             category: true,
-            subCategory: true
+            subCategories: true
           }
         },
         client: {
@@ -489,7 +489,7 @@ export class FreelanceService {
         project: {
           include: {
             category: true,
-            subCategory: true
+            subCategories: true
           }
         },
         client: {

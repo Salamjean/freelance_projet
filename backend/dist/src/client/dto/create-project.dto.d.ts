@@ -3,7 +3,7 @@ export declare class CreateProjectDto {
     title: string;
     description: string;
     categoryId: number;
-    subCategoryId: number;
+    subCategoryIds: number[];
     budget: number;
     budgetType: BudgetType;
     experienceLevel: ExperienceLevel;

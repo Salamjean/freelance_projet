@@ -255,8 +255,7 @@ model Project {
   description     String          @db.Text
   categoryId      Int
   category        Category        @relation(fields: [categoryId], references: [id])
-  subCategoryId   Int
-  subCategory     SubCategory     @relation(fields: [subCategoryId], references: [id])
+  subCategories   SubCategory[]
   budget          Decimal         @db.Decimal(10, 2)
   budgetType      BudgetType      @default(FIXED)
   duration        String?

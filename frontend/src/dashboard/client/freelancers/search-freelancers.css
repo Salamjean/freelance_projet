@@ -106,10 +106,10 @@
 }
 
 /* Grille de cartes */
-.freelancers-grid {
+.search-freelancers-page .freelancers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
 }
 
 /* Carte Freelance Premium */
@@ -449,6 +449,12 @@
 }
 
 /* Responsive */
+@media (max-width: 1200px) {
+  .search-freelancers-page .freelancers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .freelancer-filters {
     flex-direction: column;
@@ -470,7 +476,7 @@
     text-align: center;
   }
 
-  .freelancers-grid {
+  .search-freelancers-page .freelancers-grid {
     grid-template-columns: 1fr;
     gap: 20px;
   }

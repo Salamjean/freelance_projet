@@ -17,7 +17,7 @@ class CreateProjectDto {
     title;
     description;
     categoryId;
-    subCategoryId;
+    subCategoryIds;
     budget;
     budgetType;
     experienceLevel;
@@ -43,11 +43,12 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "categoryId", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 1 }),
-    (0, class_validator_1.IsNumber)(),
+    (0, swagger_1.ApiProperty)({ example: [1, 2] }),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsNumber)({}, { each: true }),
     (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], CreateProjectDto.prototype, "subCategoryId", void 0);
+    __metadata("design:type", Array)
+], CreateProjectDto.prototype, "subCategoryIds", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ example: 500000 }),
     (0, class_validator_1.IsNumber)(),

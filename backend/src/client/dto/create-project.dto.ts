@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber, IsEnum, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsEnum, IsOptional, IsArray } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { BudgetType, ExperienceLevel } from '@prisma/client';
 
@@ -18,10 +18,11 @@ export class CreateProjectDto {
   @IsNotEmpty()
   categoryId: number;
 
-  @ApiProperty({ example: 1 })
-  @IsNumber()
+  @ApiProperty({ example: [1, 2] })
+  @IsArray()
+  @IsNumber({}, { each: true })
   @IsNotEmpty()
-  subCategoryId: number;
+  subCategoryIds: number[];
 
   @ApiProperty({ example: 500000 })
   @IsNumber()

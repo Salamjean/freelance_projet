@@ -63,7 +63,9 @@ let ClientService = class ClientService {
                 title: dto.title,
                 description: dto.description,
                 categoryId: dto.categoryId,
-                subCategoryId: dto.subCategoryId,
+                subCategories: {
+                    connect: dto.subCategoryIds.map((id) => ({ id }))
+                },
                 budget: dto.budget,
                 budgetType: dto.budgetType,
                 experienceLevel: dto.experienceLevel,
@@ -89,7 +91,10 @@ let ClientService = class ClientService {
                 title: dto.title,
                 description: dto.description,
                 categoryId: dto.categoryId,
-                subCategoryId: dto.subCategoryId,
+                subCategories: {
+                    set: [],
+                    connect: dto.subCategoryIds.map((id) => ({ id }))
+                },
                 budget: dto.budget,
                 budgetType: dto.budgetType,
                 experienceLevel: dto.experienceLevel,
@@ -122,7 +127,7 @@ let ClientService = class ClientService {
             },
             include: {
                 category: true,
-                subCategory: true,
+                subCategories: true,
                 skills: {
                     include: { skill: true }
                 },
@@ -152,7 +157,7 @@ let ClientService = class ClientService {
             },
             include: {
                 category: true,
-                subCategory: true,
+                subCategories: true,
                 skills: {
                     include: { skill: true }
                 },

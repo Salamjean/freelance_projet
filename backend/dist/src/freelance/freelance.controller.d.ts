@@ -98,7 +98,6 @@ export declare class FreelanceController {
                 status: import("@prisma/client").$Enums.ProjectStatus;
                 clientId: number;
                 categoryId: number;
-                subCategoryId: number;
                 budget: import("@prisma/client-runtime-utils").Decimal;
                 budgetType: import("@prisma/client").$Enums.BudgetType;
                 duration: string | null;
@@ -210,7 +209,6 @@ export declare class FreelanceController {
             status: import("@prisma/client").$Enums.ProjectStatus;
             clientId: number;
             categoryId: number;
-            subCategoryId: number;
             budget: import("@prisma/client-runtime-utils").Decimal;
             budgetType: import("@prisma/client").$Enums.BudgetType;
             duration: string | null;
@@ -236,14 +234,14 @@ export declare class FreelanceController {
                 name: string;
                 slug: string;
             };
-            subCategory: {
+            subCategories: {
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
                 slug: string;
                 categoryId: number;
-            };
+            }[];
         } & {
             id: number;
             createdAt: Date;
@@ -253,7 +251,6 @@ export declare class FreelanceController {
             status: import("@prisma/client").$Enums.ProjectStatus;
             clientId: number;
             categoryId: number;
-            subCategoryId: number;
             budget: import("@prisma/client-runtime-utils").Decimal;
             budgetType: import("@prisma/client").$Enums.BudgetType;
             duration: string | null;
@@ -338,14 +335,14 @@ export declare class FreelanceController {
                 name: string;
                 slug: string;
             };
-            subCategory: {
+            subCategories: {
                 id: number;
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
                 slug: string;
                 categoryId: number;
-            };
+            }[];
         } & {
             id: number;
             createdAt: Date;
@@ -355,7 +352,6 @@ export declare class FreelanceController {
             status: import("@prisma/client").$Enums.ProjectStatus;
             clientId: number;
             categoryId: number;
-            subCategoryId: number;
             budget: import("@prisma/client-runtime-utils").Decimal;
             budgetType: import("@prisma/client").$Enums.BudgetType;
             duration: string | null;
@@ -429,7 +425,6 @@ export declare class FreelanceController {
             status: import("@prisma/client").$Enums.ProjectStatus;
             clientId: number;
             categoryId: number;
-            subCategoryId: number;
             budget: import("@prisma/client-runtime-utils").Decimal;
             budgetType: import("@prisma/client").$Enums.BudgetType;
             duration: string | null;
@@ -482,7 +477,6 @@ export declare class FreelanceController {
             status: import("@prisma/client").$Enums.ProjectStatus;
             clientId: number;
             categoryId: number;
-            subCategoryId: number;
             budget: import("@prisma/client-runtime-utils").Decimal;
             budgetType: import("@prisma/client").$Enums.BudgetType;
             duration: string | null;
@@ -525,7 +519,6 @@ export declare class FreelanceController {
             status: import("@prisma/client").$Enums.ProjectStatus;
             clientId: number;
             categoryId: number;
-            subCategoryId: number;
             budget: import("@prisma/client-runtime-utils").Decimal;
             budgetType: import("@prisma/client").$Enums.BudgetType;
             duration: string | null;
@@ -559,7 +552,6 @@ export declare class FreelanceController {
             status: import("@prisma/client").$Enums.ProjectStatus;
             clientId: number;
             categoryId: number;
-            subCategoryId: number;
             budget: import("@prisma/client-runtime-utils").Decimal;
             budgetType: import("@prisma/client").$Enums.BudgetType;
             duration: string | null;
@@ -642,7 +634,6 @@ export declare class FreelanceController {
         status: import("@prisma/client").$Enums.ProjectStatus;
         clientId: number;
         categoryId: number;
-        subCategoryId: number;
         budget: import("@prisma/client-runtime-utils").Decimal;
         budgetType: import("@prisma/client").$Enums.BudgetType;
         duration: string | null;

@@ -26,7 +26,7 @@ interface Project {
   createdAt: string;
   status: string;
   category: Category;
-  subCategory: SubCategory;
+  subCategories: SubCategory[];
   clientId: number;
   client?: {
     email: string;
@@ -122,7 +122,9 @@ export const ProjectDetails: React.FC<ProjectDetailsProps> = ({ userId }) => {
           <div>
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
               <span className="project-cat-badge">{project.category?.name}</span>
-              {project.subCategory && <span className="project-subcat-badge">{project.subCategory.name}</span>}
+              {project.subCategories && project.subCategories.map(sub => (
+                <span key={sub.id} className="project-subcat-badge">{sub.name}</span>
+              ))}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
               <h1 style={{ fontSize: '1.875rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>{project.title}</h1>

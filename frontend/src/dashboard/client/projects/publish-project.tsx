@@ -25,7 +25,8 @@ interface PublishProjectProps {
 export const PublishProject: React.FC<PublishProjectProps> = ({ userId, onProjectPublished, projectToEdit }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | ''>(projectToEdit?.categoryId || '');
-  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<number | ''>(projectToEdit?.subCategoryId || '');
+  const initialSubCatIds = projectToEdit?.subCategories?.map((s: any) => s.id) || [];
+  const [selectedSubCategoryIds, setSelectedSubCategoryIds] = useState<number[]>(initialSubCatIds);
   
   // États de formulaire
   const [title, setTitle] = useState(projectToEdit?.title || '');
@@ -80,7 +81,7 @@ export const PublishProject: React.FC<PublishProjectProps> = ({ userId, onProjec
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const catId = e.target.value === '' ? '' : parseInt(e.target.value, 10);
     setSelectedCategoryId(catId);
-    setSelectedSubCategoryId(''); // Réinitialiser la sous-catégorie
+    setSelectedSubCategoryIds([]); // Réinitialiser les sous-catégories
   };
 
   const getFilteredSubCategories = () => {
@@ -93,8 +94,8 @@ export const PublishProject: React.FC<PublishProjectProps> = ({ userId, onProjec
     e.preventDefault();
     setError(null);
 
-    if (!title || !description || !selectedCategoryId || !selectedSubCategoryId || !budget) {
-      setError("Veuillez remplir tous les champs obligatoires (Titre, Description, Catégorie, Sous-catégorie, Budget).");
+    if (!title || !description || !selectedCategoryId || selectedSubCategoryIds.length === 0 || !budget) {
+      setError("Veuillez remplir tous les champs obligatoires (Titre, Description, Catégorie, au moins une Sous-catégorie, Budget).");
       return;
     }
 
@@ -105,7 +106,7 @@ export const PublishProject: React.FC<PublishProjectProps> = ({ userId, onProjec
         title,
         description,
         categoryId: Number(selectedCategoryId),
-        subCategoryId: Number(selectedSubCategoryId),
+        subCategoryIds: selectedSubCategoryIds,
         budget: Number(budget),
         budgetType,
         experienceLevel,
@@ -204,20 +205,32 @@ export const PublishProject: React.FC<PublishProjectProps> = ({ userId, onProjec
             </div>
 
             <div className="form-group">
-              <label htmlFor="project-subcategory" className="form-label">Sous-catégorie <span className="required">*</span></label>
-              <select
-                id="project-subcategory"
-                className="form-select"
-                value={selectedSubCategoryId}
-                onChange={(e) => setSelectedSubCategoryId(e.target.value === '' ? '' : parseInt(e.target.value, 10))}
-                disabled={loading || selectedCategoryId === ''}
-                required
-              >
-                <option value="">Sélectionnez une sous-catégorie</option>
-                {getFilteredSubCategories().map((sub) => (
-                  <option key={sub.id} value={sub.id}>{sub.name}</option>
+              <label className="form-label">Sous-catégories <span className="required">*</span></label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '8px' }}>
+                {selectedCategoryId === '' ? (
+                  <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Veuillez d'abord sélectionner une catégorie</span>
+                ) : getFilteredSubCategories().map((sub) => (
+                  <label key={sub.id} style={{ 
+                    display: 'flex', alignItems: 'center', gap: '6px', background: '#f1f5f9', 
+                    padding: '6px 12px', borderRadius: '20px', fontSize: '13px', 
+                    cursor: 'pointer', border: '1px solid #e2e8f0', transition: 'all 0.2s' 
+                  }}>
+                    <input 
+                      type="checkbox" 
+                      style={{ cursor: 'pointer' }}
+                      checked={selectedSubCategoryIds.includes(sub.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedSubCategoryIds([...selectedSubCategoryIds, sub.id]);
+                        } else {
+                          setSelectedSubCategoryIds(selectedSubCategoryIds.filter(id => id !== sub.id));
+                        }
+                      }}
+                    />
+                    {sub.name}
+                  </label>
                 ))}
-              </select>
+              </div>
             </div>
           </div>
 
